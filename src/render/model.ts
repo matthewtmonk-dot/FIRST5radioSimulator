@@ -103,6 +103,9 @@ export interface Anchor {
   x: number; // ft from view left
   y: number; // ft above grade
   w: number; // ft — width of the opening/area
+  /** Opening height and center (ft), for interior glow. */
+  h?: number;
+  cy?: number;
   label: string;
   floor?: number;
 }
@@ -803,7 +806,7 @@ export function buildView(spec: BuildingSpec, view: Side): ViewModel {
   const anchors: Record<string, Anchor> = {};
   for (const f of features) {
     if (!f.id) continue;
-    anchors[f.id] = { id: f.id, x: f.x + f.w / 2, y: f.yAbs + f.h / 2, w: f.w, label: `${f.kind} ${f.id}`, floor: f.floor };
+    anchors[f.id] = { id: f.id, x: f.x + f.w / 2, y: f.yAbs + f.h / 2, w: f.w, h: f.h, cy: f.yAbs + f.h / 2, label: `${f.kind} ${f.id}`, floor: f.floor };
     if (f.kind === 'garage' || f.kind === 'door' || f.kind === 'slider' || f.kind === 'storefront') {
       anchors[f.id].y = f.yAbs + f.h * 0.75; // smoke leaves the top of openings
     }

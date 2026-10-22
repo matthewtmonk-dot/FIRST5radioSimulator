@@ -50,6 +50,7 @@ export const LEXICON = {
     '\\bfire (is )?showing\\b', '\\bflames? (showing|visible|from|coming)\\b', '\\bvisible (fire|flames?)\\b',
     '\\bfire (coming )?(from|through|out of|venting)\\b', '\\bsmoke and (fire|flames?)\\b', '\\b(fire|flames?) and smoke\\b',
     '\\bactive fire\\b', '\\bfire in the\\b',
+    '\\b(dumpster|vehicle|car|trash|kitchen|garage|attic|room|bedroom|apartment|balcony|office|unit|wall|duct|hood) fire\\b',
   ],
   defensiveConditions: [
     '\\bdefensive (fire )?conditions\\b', '\\bfully involved\\b', '\\bheavily involved\\b', '\\bwell involved\\b',
@@ -59,7 +60,7 @@ export const LEXICON = {
 
   // --- Strategy
   offensive: ['\\boffensive( mode| strategy| operations)?\\b', '\\bgoing offensive\\b'],
-  defensive: ['\\bdefensive(?! (fire )?conditions)( mode| strategy| operations)?\\b', '\\bgoing defensive\\b'],
+  defensive: ['\\bdefensive(?! (fire )?conditions| (operations|attack|lines?|positions?)\\b)( mode| strategy)?\\b', '\\bgoing defensive\\b'],
   investigating: ['\\binvestigat(ing|ive|ion)( mode)?\\b'],
 
   // --- Initial actions
@@ -143,7 +144,7 @@ export interface Match {
   text: string;
 }
 
-const NEGATORS = /\b(no|not|without|negative|nothing|none|never|isn t|isnt|aren t|n t)\s+(\S+\s+){0,1}$/;
+const NEGATORS = /\b(no|not|without|negative|nothing|none|never|isn t|isnt|aren t|n t)\s+([a-z0-9]+\s+){0,1}$/;
 
 const cache = new Map<string, RegExp[]>();
 

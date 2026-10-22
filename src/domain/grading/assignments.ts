@@ -13,6 +13,9 @@ import { finalize, result } from './common';
 import { exampleAssignment } from './examples';
 import type { ItemResult, TransmissionGrade } from './types';
 
+/** Tasks whose name already states the objective (RIT exists to rescue firefighters, etc.). */
+const SELF_EVIDENT = new Set<Task>(['rit', 'utilities', 'stage', 'medical', 'lobby', 'investigate', 'recon', 'checkExtension', 'exposure']);
+
 export interface AssignmentContext {
   instance: ScenarioInstance;
   condition: ConditionState;
@@ -57,7 +60,7 @@ export function gradeAssignmentTransmission(parsed: ParsedAssignment[], normaliz
           }),
   );
   const withTask = real.filter((p) => p.tasks.length);
-  const whyOk = withTask.filter((p) => p.explicitObjective || p.tasks.some((x) => TASK_INFO[x].code)).length;
+  const whyOk = withTask.filter((p) => p.explicitObjective || p.tasks.some((x) => TASK_INFO[x].code || SELF_EVIDENT.has(x))).length;
   items.push(
     !withTask.length
       ? result(rubric, 'as.why', 'na', 'No task given.')
@@ -88,6 +91,8 @@ export interface SessionAssignmentInput {
   units: UnitState[];
   log: RadioEntry[];
   endT: number;
+  /** Strategy in effect at the end; a change to defensive pulls interior tasks without un-covering them. */
+  finalStrategy?: Strategy;
 }
 
 /** Combines per-transmission assignment grades with session-level checks. */
@@ -111,7 +116,11 @@ export function gradeAssignmentsSession(input: SessionAssignmentInput): ItemResu
   }
   // Coverage of critical tasks
   const active = input.assignments.filter((a) => a.status !== 'reassigned');
-  const covered = (task: Task) => active.some((a) => a.task === task);
+  const defensiveNow = input.finalStrategy === 'defensive';
+  const covered = (task: Task) =>
+    active.some((a) => a.task === task) ||
+    // Work pulled out by a change to defensive was still assigned; fire control continues with defensive streams.
+    (defensiveNow && (input.assignments.some((a) => a.task === task) || (task === 'fireControl' && active.some((a) => a.task === 'defensive'))));
   const crit = inst.expectations.criticalTasks;
   const exp = inst.expectations.expectedTasks;
   if (!crit.length && !exp.length) items.push(result(rubric, 'as.coverage', 'na', 'No specific tasks required.'));

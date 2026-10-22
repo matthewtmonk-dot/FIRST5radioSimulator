@@ -367,6 +367,20 @@ function progressEvents(state: SimState): SimState {
   return s;
 }
 
+/** Instructor control (Practice Mode): fire a scenario event now. */
+export function instructorFireEvent(state: SimState, eventId: string): SimState {
+  const ev = state.instance.events.find((e) => e.id === eventId);
+  if (!ev || state.phase !== 'onScene' || state.ended || state.firedEvents.some((f) => f.id === eventId)) return state;
+  const s: SimState = { ...state, firedEvents: [...state.firedEvents, { id: ev.id, t: state.t }], notes: [...state.notes, `Instructor triggered: ${ev.id}`] };
+  return applyEffects(s, ev.effects);
+}
+
+/** Instructor control (Practice Mode): switch the visible condition state. */
+export function instructorSetCondition(state: SimState, conditionId: string): SimState {
+  if (state.phase !== 'onScene' || state.ended) return state;
+  return applyEffects({ ...state, notes: [...state.notes, `Instructor set conditions: ${conditionId}`] }, [{ setCondition: conditionId }]);
+}
+
 function progressAcks(state: SimState): SimState {
   let s = state;
   for (const e of s.log) {

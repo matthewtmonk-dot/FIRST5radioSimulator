@@ -1,0 +1,38 @@
+@import "tailwindcss";
+
+@theme {
+  --color-ink-950: #07090c;
+  --color-ink-900: #0b0f14;
+  --color-ink-850: #10151c;
+  --color-ink-800: #151b24;
+  --color-ink-700: #1e2631;
+  --color-ink-600: #2a3441;
+  --color-ink-500: #3b4757;
+  --color-ink-400: #5d6b7c;
+  --color-ink-300: #8a97a6;
+  --color-ink-200: #b9c3cd;
+  --color-ink-100: #e2e7ec;
+  --color-signal-red: #e0533d;
+  --color-signal-amber: #e8a33d;
+  --color-signal-green: #4fb07a;
+  --color-signal-blue: #5b9bd5;
+  --font-sans: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --font-mono: "JetBrains Mono", "Cascadia Mono", "Consolas", ui-monospace, monospace;
+}
+
+html, body, #root { height: 100%; }
+body {
+  margin: 0;
+  background: var(--color-ink-900);
+  color: var(--color-ink-100);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+*:focus-visible { outline: 2px solid var(--color-signal-amber); outline-offset: 2px; }
+.tabular { font-variant-numeric: tabular-nums; }
+.scroll-thin { scrollbar-width: thin; scrollbar-color: var(--color-ink-600) transparent; }
+@media (prefers-reduced-motion: reduce) {
+  * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}
+.ptt-ring { box-shadow: 0 0 0 0 rgba(224, 83, 61, 0.6); animation: ptt 1.2s infinite; }
+@keyframes ptt { 0% { box-shadow: 0 0 0 0 rgba(224,83,61,.55);} 70% { box-shadow: 0 0 0 18px rgba(224,83,61,0);} 100% { box-shadow: 0 0 0 0 rgba(224,83,61,0);} }

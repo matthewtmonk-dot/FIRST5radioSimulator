@@ -30,7 +30,7 @@ export function dynamicFollowUpExample(s: SimState): string {
     `${cmd} to ${inst.dispatchName}, ${recon}.`,
     basement,
     finds ? `${finds}.` : '',
-    `Remaining ${strategyNow(s)}.`,
+    s.declaredStrategy && s.declaredStrategy !== strategyNow(s) ? `Switching to ${strategyNow(s)}.` : `Remaining ${strategyNow(s)}.`,
     interior ? `Accountability is at ${inst.ownUnit}.` : '',
   ]
     .filter(Boolean)

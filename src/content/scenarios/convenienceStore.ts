@@ -1,0 +1,162 @@
+import type { ScenarioTemplateInput } from '../../domain/scenario/schema';
+import { fire, glow, smoke } from '../helpers';
+
+// Convenience store: a dumpster fire against the building — the building is
+// the exposure. Quick attack and checking the soffit are the job.
+export const convenienceStore: ScenarioTemplateInput = {
+  id: 'convenience-store-dumpster-exposure',
+  title: 'Dumpster fire against a convenience store',
+  summary:
+    'Dumpster burning against the Delta wall of a convenience store, next to the electric meter bank. A quick attack keeps it outside; if not, fire gets into the soffit and the ceiling space.',
+  difficulty: 'easy',
+  tags: ['commercial', 'exposure', 'quick attack', 'dumpster', 'utilities'],
+  building: {
+    archetype: 'convenience-store',
+    occupancy: 'commercial',
+    acceptableOccupancies: ['commercial'],
+    occupancyLabel: 'convenience store with fuel canopy',
+    size: 'small',
+    acceptableSizes: ['small', 'medium'],
+    stories: 1,
+    acceptableStories: [1],
+    construction: 'Block walls, wood truss roof with vinyl soffit',
+    basement: false,
+    basementRelevant: false,
+    features: ['fuel canopy on Alpha', 'dumpster enclosure on Delta', 'meter bank on Delta', 'propane exchange cage on Charlie'],
+  },
+  setting: { streetKind: 'commercial', placeName: 'Quick Stop' },
+  dispatch: {
+    nature: 'Dumpster fire, exposure',
+    callerReport: 'Store clerk reports the dumpster on the side of the building is on fire and it is right against the wall.',
+    notes: ['Clerk has moved the customers outside.'],
+  },
+  occupants: { dispatchInfo: 'Clerk and customers are outside.', status: 'all-out' },
+  units: [
+    { role: 'E2', type: 'engine', arrival: 85 },
+    { role: 'L1', type: 'ladder', arrival: 120 },
+    { role: 'BC', type: 'battalion', arrival: 210 },
+  ],
+  conditionStates: [
+    {
+      id: 'arrival',
+      description: 'Dumpster fully involved against the Delta wall. Dark smoke rising over the Delta end of the roof; soffit above the dumpster starting to melt.',
+      problem: 'working-fire',
+      acceptableProblems: ['working-fire', 'light-smoke'],
+      acceptableStrategies: ['offensive'],
+      location: { side: 'delta', floor: 1, area: 'dumpster', areaTerms: ['dumpster', 'delta', 'trash', 'side of the building', 'exterior'] },
+      conditionTerms: ['dumpster fire', 'dumpster'],
+      emitters: [
+        smoke('alpha', 'roof-main', 0.45, { color: 'dark-gray', pressure: 'moderate', spread: 0.8 }),
+        fire('delta', 'dumpster', 0.6, { spread: 1.2 }),
+        smoke('delta', 'dumpster', 0.6, { color: 'black', pressure: 'moderate', spread: 1.2 }),
+        smoke('delta', 'eaves-main', 0.25, { color: 'gray', pressure: 'lazy' }),
+        smoke('charlie', 'roof-main', 0.3, { color: 'dark-gray', pressure: 'lazy', spread: 0.8 }),
+      ],
+    },
+    {
+      id: 'soffit',
+      description: 'Fire has entered the soffit and the truss space above the Delta wall. Smoke from the eaves on Alpha and Delta and inside the store.',
+      problem: 'working-fire',
+      acceptableProblems: ['working-fire'],
+      acceptableStrategies: ['offensive'],
+      location: { side: 'delta', floor: 1, area: 'dumpster', areaTerms: ['dumpster', 'delta', 'soffit', 'eaves', 'attic', 'ceiling'] },
+      conditionTerms: ['fire in the soffit', 'extension into the building', 'eaves'],
+      emitters: [
+        smoke('alpha', 'eaves-main', 0.45, { color: 'dark-gray', pressure: 'pushing', spread: 1.5 }),
+        smoke('alpha', 'storefront', 0.25, { color: 'gray', pressure: 'lazy' }),
+        fire('delta', 'dumpster', 0.55, { spread: 1.2 }),
+        fire('delta', 'eaves-main', 0.3),
+        smoke('delta', 'eaves-main', 0.6, { color: 'black', pressure: 'pushing', spread: 1.6 }),
+        glow('delta', 'delta-wall', 0.3),
+        smoke('charlie', 'eaves-main', 0.4, { color: 'dark-gray', pressure: 'moderate', spread: 1.4 }),
+      ],
+    },
+    {
+      id: 'knockdown',
+      description: 'Dumpster and soffit knocked down. Light smoke and steam.',
+      problem: 'light-smoke',
+      acceptableProblems: ['light-smoke', 'nothing-showing'],
+      acceptableStrategies: ['offensive'],
+      location: { side: 'delta', floor: 1, area: 'dumpster', areaTerms: ['dumpster', 'delta', 'soffit'] },
+      conditionTerms: ['knockdown', 'knocked down', 'fire is out', 'under control'],
+      emitters: [smoke('delta', 'dumpster', 0.3, { color: 'white', pressure: 'lazy' }), smoke('delta', 'eaves-main', 0.12, { color: 'light-gray', pressure: 'lazy' })],
+    },
+  ],
+  initialCondition: 'arrival',
+  findings: [
+    {
+      id: 'meters',
+      side: 'delta',
+      text: 'The electric meter bank is on the Delta wall three feet from the burning dumpster.',
+      kind: 'hazard',
+      safety: true,
+      reportable: 'required',
+      match: [['meter'], ['electric'], ['power']],
+    },
+    {
+      id: 'propane',
+      side: 'charlie',
+      text: 'Propane cylinder exchange cage against the Charlie wall near the Delta corner.',
+      kind: 'hazard',
+      safety: true,
+      reportable: 'required',
+      match: [['propane'], ['cylinders'], ['lp']],
+    },
+    {
+      id: 'soffit',
+      side: 'delta',
+      text: 'The vinyl soffit above the dumpster is melting and smoke is entering the eaves.',
+      kind: 'exposure',
+      reportable: 'required',
+      match: [['soffit'], ['eave'], ['into the building'], ['extending'], ['attic']],
+    },
+    { id: 'pumps', side: 'alpha', text: 'Fuel pumps under the canopy about 50 feet from the storefront; clerk has hit the emergency pump shutoff.', kind: 'utility', reportable: 'optional', match: [['pumps'], ['fuel'], ['canopy']], revealedBy: 'arrival' },
+  ],
+  recon: { kind: '360', label: 'Walk the 360', duration: 35, full360Possible: true },
+  expectations: {
+    initialActions: ['quick-attack', 'attack-line'],
+    actionLocationTerms: ['dumpster', 'delta', 'side'],
+    objectives: ['fireControl', 'exposure'],
+    resourceDecisions: ['level1', 'reduce', 'continue'],
+    criticalTasks: ['fireControl', 'checkExtension'],
+    expectedTasks: ['utilities', 'waterSupply'],
+    followUpExpected: true,
+    transferExpected: true,
+    accountabilityExpected: false,
+    transferPriorities: ['soffit', 'ceiling', 'power company', 'propane'],
+  },
+  taskOutcomes: {
+    fireControl: { duration: 70, report: '{unit} to {command}, knockdown on the dumpster.', effects: [{ setCondition: 'knockdown' }] },
+    checkExtension: { duration: 80, report: '{unit} to {command}, soffit and ceiling opened over the Delta wall, minor charring, no extension into the store.' },
+    utilities: { duration: 40, report: '{unit} to {command}, power company requested for the meter bank; main breaker inside is off.' },
+  },
+  events: [
+    {
+      id: 'into-soffit',
+      when: { notComplete: 'fireControl', by: 75 },
+      effects: [{ setCondition: 'soffit' }],
+      explanation: 'An unattended dumpster fire against the building gets into the soffit within a couple of minutes. The building is the exposure.',
+    },
+  ],
+  examples: {
+    initialReport: [
+      '{DISPATCH}, {OWN} on scene, small one-story commercial convenience store, dumpster fire against the Delta side of the building. {OWN} will make a quick attack on the dumpster from the Delta side for fire control and exposure protection. Offensive. All other units Level One staging. {OWN} establishing {COMMAND}.',
+    ],
+    followUp: [
+      '{COMMAND} to {DISPATCH}, 360 complete. Soffit above the dumpster is melting with smoke entering the eaves. Electric meter bank on the Delta wall next to the dumpster, propane cage on Charlie. Remaining offensive.',
+    ],
+    assignments: [
+      { role: 'E2', task: 'waterSupply', text: '{E2}, from {COMMAND}, establish water supply to {OWN}.' },
+      { role: 'L1', task: 'checkExtension', text: '{L1}, from {COMMAND}, check for extension in the soffit and ceiling over the Delta wall, from inside the store.' },
+    ],
+    transfer: [],
+  },
+  explanations: {
+    initialReport:
+      'This is an exterior fire with the building as the exposure. Report the dumpster against the Delta wall, a quick attack for fire control and exposure protection, and hold the other units at Level One until you know if it got inside.',
+    followUp: 'The 360 adds the soffit involvement, the meter bank right next to the fire and the propane cage — each changes how crews work.',
+    assignments: 'Fire control on the dumpster, someone checking the soffit and ceiling from inside, and utilities for the meter bank.',
+    transfer: 'Tell the chief what got into the building (if anything), the meter bank and propane hazards, and what is still open.',
+  },
+  endWhen: 'transfer',
+};

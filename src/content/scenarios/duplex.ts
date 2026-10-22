@@ -1,0 +1,166 @@
+import type { ScenarioTemplateInput } from '../../domain/scenario/schema';
+import { fire, glow, smoke } from '../helpers';
+
+// Duplex: fire in one unit with a common attic over both. The attached unit
+// is an exposure — checking it is part of the job, not an afterthought.
+export const duplex: ScenarioTemplateInput = {
+  id: 'duplex-attached-exposure',
+  title: 'Duplex kitchen fire with an attached exposure',
+  summary:
+    'One-story duplex. Kitchen fire in the Bravo-end unit; the two units share an attic. If nobody checks the attic and the Delta-end unit, smoke starts showing from the exposure.',
+  difficulty: 'intermediate',
+  tags: ['multifamily', 'working fire', 'exposure', 'common attic'],
+  building: {
+    archetype: 'duplex',
+    occupancy: 'multifamily',
+    acceptableOccupancies: ['multifamily', 'residential'],
+    occupancyLabel: 'one-story duplex',
+    size: 'medium',
+    acceptableSizes: ['small', 'medium'],
+    stories: 1,
+    acceptableStories: [1],
+    construction: 'Concrete block with stucco, wood truss roof, common attic',
+    basement: false,
+    basementRelevant: true,
+    features: ['two side-by-side units', 'common attic', 'slab on grade'],
+  },
+  setting: { streetKind: 'residential' },
+  dispatch: {
+    nature: 'Residential structure fire',
+    callerReport: 'The resident of one side of a duplex reports smoke coming through the wall from her neighbor’s unit.',
+    notes: ['She is outside. She does not think her neighbor is home.'],
+  },
+  occupants: { dispatchInfo: 'Caller is outside; she does not think her neighbor is home.', status: 'none' },
+  units: [
+    { role: 'E2', type: 'engine', arrival: 70 },
+    { role: 'R1', type: 'rescue', arrival: 90 },
+    { role: 'L1', type: 'ladder', arrival: 115 },
+    { role: 'BC', type: 'battalion', arrival: 225 },
+  ],
+  conditionStates: [
+    {
+      id: 'arrival',
+      description: 'Kitchen fire in the Bravo-end unit. Gray smoke pushing from both front windows of that unit and from the eaves over it. Delta-end unit clear from the front.',
+      problem: 'working-fire',
+      acceptableProblems: ['working-fire', 'light-smoke'],
+      acceptableStrategies: ['offensive'],
+      location: { side: 'alpha', floor: 1, area: 'Bravo-side unit', areaTerms: ['bravo', 'unit a', 'left unit', 'left side', 'end unit', 'kitchen', 'bravo side unit'] },
+      conditionTerms: ['kitchen fire', 'fire in the bravo unit', 'working fire'],
+      emitters: [
+        smoke('alpha', 'unitA-win-1', 0.45, { color: 'gray', pressure: 'moderate' }),
+        smoke('alpha', 'unitA-win-2', 0.35, { color: 'gray', pressure: 'moderate' }),
+        glow('alpha', 'unitA-win-2', 0.25),
+        smoke('alpha', 'eaves-main', 0.25, { color: 'gray', pressure: 'lazy', spread: 1.2 }),
+        smoke('bravo', 'win-b1', 0.45, { color: 'dark-gray', pressure: 'pushing' }),
+        smoke('bravo', 'eaves-main', 0.3, { color: 'gray', pressure: 'moderate', spread: 1.4 }),
+        smoke('charlie', 'unitA-win-c', 0.5, { color: 'dark-gray', pressure: 'pushing' }),
+        fire('charlie', 'unitA-win-c', 0.25),
+        smoke('charlie', 'unitA-rear-door', 0.3, { color: 'gray' }),
+      ],
+    },
+    {
+      id: 'exposure',
+      description: 'Fire has entered the common attic. Smoke now pushing from the eaves over the Delta-end unit as well.',
+      problem: 'working-fire',
+      acceptableProblems: ['working-fire'],
+      acceptableStrategies: ['offensive'],
+      location: { side: 'alpha', floor: 1, area: 'Bravo-side unit', areaTerms: ['bravo', 'unit a', 'left unit', 'kitchen', 'attic', 'both units'] },
+      conditionTerms: ['fire in the attic', 'extension into the attic', 'extending to the other unit', 'exposure'],
+      emitters: [
+        smoke('alpha', 'unitA-win-1', 0.5, { color: 'dark-gray', pressure: 'pushing' }),
+        smoke('alpha', 'unitA-win-2', 0.45, { color: 'dark-gray', pressure: 'pushing' }),
+        glow('alpha', 'unitA-win-2', 0.4),
+        smoke('alpha', 'eaves-main', 0.55, { color: 'dark-gray', pressure: 'pushing', spread: 3 }),
+        smoke('alpha', 'unitB-win-2', 0.2, { color: 'gray', pressure: 'lazy' }),
+        smoke('delta', 'eaves-main', 0.45, { color: 'gray', pressure: 'moderate', spread: 1.5 }),
+        smoke('bravo', 'eaves-main', 0.5, { color: 'dark-gray', pressure: 'pushing', spread: 1.6 }),
+        smoke('charlie', 'unitA-win-c', 0.55, { color: 'black', pressure: 'pushing' }),
+        fire('charlie', 'unitA-win-c', 0.35),
+        smoke('charlie', 'eaves-main', 0.45, { color: 'dark-gray', pressure: 'moderate', spread: 2.5 }),
+      ],
+    },
+    {
+      id: 'knockdown',
+      description: 'Kitchen fire knocked down. Light smoke from the Bravo-end unit while overhaul continues.',
+      problem: 'light-smoke',
+      acceptableProblems: ['light-smoke', 'working-fire'],
+      acceptableStrategies: ['offensive'],
+      location: { side: 'alpha', floor: 1, area: 'Bravo-side unit', areaTerms: ['bravo', 'unit a', 'kitchen', 'left unit'] },
+      conditionTerms: ['knockdown', 'knocked down', 'fire is out', 'under control'],
+      emitters: [
+        smoke('alpha', 'unitA-win-2', 0.2, { color: 'white', pressure: 'lazy' }),
+        smoke('charlie', 'unitA-win-c', 0.25, { color: 'white', pressure: 'lazy' }),
+      ],
+    },
+  ],
+  initialCondition: 'arrival',
+  findings: [
+    {
+      id: 'rear-kitchen',
+      side: 'charlie',
+      text: 'Fire showing from the kitchen window at the rear of the Bravo-end unit.',
+      kind: 'conditions',
+      reportable: 'required',
+      match: [['charlie', 'fire'], ['rear', 'fire'], ['kitchen', 'window'], ['charlie', 'kitchen'], ['fire', 'showing', 'charlie']],
+    },
+    {
+      id: 'common-attic',
+      side: 'bravo',
+      text: 'Gable-end vents show one continuous attic over both units — no visible firewall.',
+      kind: 'exposure',
+      reportable: 'required',
+      match: [['common attic'], ['shared attic'], ['attic', 'both'], ['no firewall'], ['attic', 'exposure'], ['attic', 'other unit']],
+    },
+    { id: 'delta-clear', side: 'delta', text: 'Delta-end unit: no smoke from the Delta side yet. Gas meter on the Delta wall.', kind: 'utility', reportable: 'recommended', match: [['gas'], ['meter'], ['delta', 'clear'], ['delta', 'nothing']] },
+    { id: 'slab', side: 'general', text: 'No basement — slab on grade.', kind: 'basement', reportable: 'required', match: [['no basement'], ['slab']] },
+  ],
+  recon: { kind: '360', label: 'Walk the 360', duration: 45, full360Possible: true },
+  expectations: {
+    initialActions: ['attack-line', 'supply-line'],
+    actionLocationTerms: ['front door', 'bravo', 'unit a', 'left unit', 'alpha', 'kitchen'],
+    objectives: ['fireControl', 'primarySearch'],
+    resourceDecisions: ['level1', 'continue', 'upgrade'],
+    criticalTasks: ['fireControl', 'primarySearch', 'waterSupply', 'checkExtension'],
+    expectedTasks: ['utilities'],
+    followUpExpected: true,
+    transferExpected: true,
+    accountabilityExpected: true,
+    transferPriorities: ['attic', 'exposure', 'other unit', 'secondary search'],
+  },
+  taskOutcomes: {
+    fireControl: { duration: 120, report: '{unit} to {command}, knockdown on the kitchen fire in the Bravo-end unit.', effects: [{ setCondition: 'knockdown' }] },
+    primarySearch: { duration: 100, report: '{unit} to {command}, primary search of both units complete, all clear.' },
+    checkExtension: { duration: 90, report: '{unit} to {command}, ceiling pulled in the Delta-end unit, light smoke in the attic, no fire past the party wall.' },
+  },
+  events: [
+    {
+      id: 'attic-spread',
+      when: { notTask: 'checkExtension', by: 150 },
+      effects: [{ setCondition: 'exposure' }, { radio: { from: 'Dispatch', text: '{COMMAND}, caller reports smoke is now coming into her unit through the ceiling.' } }],
+      explanation: 'With a common attic, the attached unit must be checked early. If nobody is assigned, the fire travels across the attic.',
+    },
+  ],
+  examples: {
+    initialReport: [
+      '{DISPATCH}, {OWN} on scene, medium one-story duplex, working fire in the Bravo-side unit. {OWN} is stretching an attack line through the front door of the Bravo unit for fire control and primary search. Offensive. All other units Level One staging. {OWN} establishing {COMMAND}.',
+    ],
+    followUp: [
+      '{COMMAND} to {DISPATCH}, 360 complete. No basement. Fire showing from the kitchen window on Charlie. Common attic over both units, no firewall. Gas meter on Delta. Remaining offensive. Accountability is at {OWN}.',
+    ],
+    assignments: [
+      { role: 'E2', task: 'waterSupply', text: '{E2}, from {COMMAND}, establish water supply to {OWN}.' },
+      { role: 'R1', task: 'primarySearch', text: '{R1}, from {COMMAND}, primary search of the Delta-side unit, then check the Bravo unit with {OWN}.' },
+      { role: 'L1', task: 'checkExtension', text: '{L1}, from {COMMAND}, check for extension into the attic and the Delta-side unit, protect that exposure.' },
+    ],
+    transfer: [],
+  },
+  explanations: {
+    initialReport:
+      'Name it what it is: a one-story duplex (multifamily). Smoke from one unit and the eaves over it is a working fire. Your line goes into the fire unit for fire control and primary search.',
+    followUp:
+      'The 360 confirms fire in the rear kitchen and a common attic over both units. That attic is the biggest threat — say so on the radio so the next assignment goes there.',
+    assignments: 'Water supply, primary search of both units, and an early assignment to check the attic and the attached unit are the critical tasks.',
+    transfer: 'Brief the chief on the kitchen fire, the common attic, what the crew found in the attached unit, and what still needs to be opened up.',
+  },
+  endWhen: 'transfer',
+};

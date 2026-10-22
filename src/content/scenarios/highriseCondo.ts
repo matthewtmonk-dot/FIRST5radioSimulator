@@ -1,0 +1,166 @@
+import type { ScenarioTemplateInput } from '../../domain/scenario/schema';
+import { fire, glow, smoke } from '../helpers';
+
+// Beachfront high-rise condominium: upper-floor unit fire. Recon is from the
+// lobby and fire alarm panel; the ocean side cannot be reached for a 360.
+export const highriseCondo: ScenarioTemplateInput = {
+  id: 'highrise-condo-upper-floor',
+  title: 'High-rise condo, ninth-floor unit fire',
+  summary:
+    'Twelve-story beachfront condominium. Light smoke from a ninth-floor window on arrival; the alarm panel and security confirm a fire in unit 903. Standpipe operation from the floor below. The dune and seawall prevent a full 360.',
+  difficulty: 'difficult',
+  tags: ['multifamily', 'high-rise', 'standpipe', 'access limitations', 'beachfront'],
+  building: {
+    archetype: 'highrise-condo',
+    occupancy: 'multifamily',
+    acceptableOccupancies: ['multifamily', 'mixed-use'],
+    occupancyLabel: 'high-rise condominium',
+    size: 'mega',
+    acceptableSizes: ['large', 'mega'],
+    stories: 12,
+    acceptableStories: [12],
+    construction: 'Reinforced concrete, sprinklered, two enclosed stairs with standpipes, FDC on Alpha',
+    basement: false,
+    basementRelevant: false,
+    features: ['lobby with fire alarm panel', 'two stairwells (A and B)', 'FDC at the front entrance', 'ocean-side balconies'],
+  },
+  setting: { streetKind: 'beachfront', placeName: 'Coquina Towers' },
+  dispatch: {
+    nature: 'High-rise structure fire',
+    callerReport: 'Alarm company reports a smoke detector and water flow on the ninth floor. A resident on nine reports smoke in the hallway.',
+    notes: ['Security will meet you in the lobby.'],
+  },
+  occupants: { dispatchInfo: 'Residents on the fire floor are evacuating by the stairs; occupancy of the fire unit unknown.', status: 'unknown' },
+  units: [
+    { role: 'E2', type: 'engine', arrival: 55 },
+    { role: 'L1', type: 'tower', arrival: 85 },
+    { role: 'R1', type: 'rescue', arrival: 95 },
+    { role: 'E3', type: 'engine', arrival: 120 },
+    { role: 'BC', type: 'battalion', arrival: 200 },
+  ],
+  conditionStates: [
+    {
+      id: 'arrival',
+      description: 'Fire in unit 903 (Alpha-side unit near the center). Sprinkler holding it partially. Light smoke from the 903 window; nothing else visible from the street.',
+      problem: 'light-smoke',
+      acceptableProblems: ['light-smoke', 'working-fire'],
+      acceptableStrategies: ['offensive'],
+      location: { side: 'alpha', floor: 9, area: 'unit 903', areaTerms: ['903', '9th floor', 'ninth floor', 'floor 9', 'unit'] },
+      conditionTerms: ['light smoke', 'fire in 903', '9th floor'],
+      emitters: [smoke('alpha', 'unit-9-3', 0.25, { color: 'gray', pressure: 'lazy' })],
+    },
+    {
+      id: 'window-failed',
+      description: 'The 903 window has failed. Flames from the window, dark smoke lapping up toward the tenth floor.',
+      problem: 'working-fire',
+      acceptableProblems: ['working-fire'],
+      acceptableStrategies: ['offensive'],
+      location: { side: 'alpha', floor: 9, area: 'unit 903', areaTerms: ['903', '9th floor', 'ninth floor', 'floor 9', '10th floor', 'unit'] },
+      conditionTerms: ['fire in 903', 'window failed', 'fire showing on 9', 'auto exposure'],
+      emitters: [
+        glow('alpha', 'unit-9-3', 0.8),
+        fire('alpha', 'unit-9-3', 0.5),
+        smoke('alpha', 'unit-9-3', 0.65, { color: 'black', pressure: 'pushing' }),
+        smoke('alpha', 'unit-10-3', 0.25, { color: 'dark-gray', pressure: 'moderate' }),
+      ],
+    },
+    {
+      id: 'knockdown',
+      description: 'Fire in 903 knocked down from the hallway. White smoke from the window.',
+      problem: 'light-smoke',
+      acceptableProblems: ['light-smoke', 'working-fire'],
+      acceptableStrategies: ['offensive'],
+      location: { side: 'alpha', floor: 9, area: 'unit 903', areaTerms: ['903', '9th floor', 'ninth floor', 'floor 9'] },
+      conditionTerms: ['knockdown', 'knocked down', 'fire is out', 'under control'],
+      emitters: [smoke('alpha', 'unit-9-3', 0.25, { color: 'white', pressure: 'lazy' })],
+    },
+  ],
+  initialCondition: 'arrival',
+  findings: [
+    {
+      id: 'panel',
+      side: 'interior',
+      text: 'Fire alarm panel: smoke detector in 903 and the ninth-floor hallway, water flow on floor 9. Elevators recalled to the lobby.',
+      kind: 'conditions',
+      reportable: 'required',
+      match: [['903'], ['panel'], ['water flow'], ['sprinkler'], ['9th floor', 'alarm'], ['ninth floor', 'alarm']],
+    },
+    {
+      id: 'security',
+      side: 'interior',
+      text: 'Security: the owner of 903 left this morning; the neighbor in 905 uses oxygen and has not been seen coming down.',
+      kind: 'life-safety',
+      reportable: 'required',
+      match: [['905'], ['oxygen'], ['neighbor'], ['occupant', 'unaccounted'], ['not accounted']],
+    },
+    {
+      id: 'stairs',
+      side: 'interior',
+      text: 'Stair A (Bravo end) is the attack stair with a standpipe outlet on every landing; Stair B (Delta end) is being used for evacuation.',
+      kind: 'access',
+      reportable: 'recommended',
+      match: [['stair a'], ['stair b'], ['attack stair'], ['evacuation stair'], ['stairwell']],
+    },
+    {
+      id: 'no-360',
+      side: 'general',
+      text: 'The ocean side cannot be reached by apparatus — dune walkover and seawall. A full 360 is not possible; the tower can only work from the Alpha and Bravo sides.',
+      kind: 'access',
+      safety: false,
+      reportable: 'required',
+      match: [['360', 'not'], ['dune'], ['seawall'], ['ocean side', 'access'], ['no access', 'charlie']],
+    },
+  ],
+  recon: { kind: 'lobby', label: 'Lobby recon (alarm panel and security)', duration: 40, full360Possible: false },
+  expectations: {
+    initialActions: ['standpipe-attack'],
+    actionLocationTerms: ['stair a', 'stairwell', 'standpipe', '8th floor', 'eighth floor', 'floor below', '9th floor', 'ninth floor'],
+    objectives: ['fireControl', 'primarySearch'],
+    resourceDecisions: ['continue', 'upgrade'],
+    criticalTasks: ['fireControl', 'primarySearch', 'waterSupply', 'lobby'],
+    expectedTasks: ['rit', 'checkExtension'],
+    followUpExpected: true,
+    transferExpected: true,
+    accountabilityExpected: true,
+    transferPriorities: ['905', 'tenth floor', 'search above', 'evacuation'],
+  },
+  taskOutcomes: {
+    fireControl: { duration: 150, report: '{unit} to {command}, knockdown in unit 903.', effects: [{ setCondition: 'knockdown' }] },
+    primarySearch: { duration: 140, report: '{unit} to {command}, primary search of the ninth floor complete; we brought the resident of 905 to Stair B, she is being walked down. Ninth floor all clear.' },
+    waterSupply: { duration: 60, report: '{unit} to {command}, we are supplying the FDC, water supply established.' },
+    lobby: { duration: 30, report: '{unit} to {command}, lobby control established, elevators locked in fire service.' },
+    checkExtension: { duration: 100, report: '{unit} to {command}, tenth floor checked, light smoke in 1003, no fire extension.' },
+  },
+  events: [
+    {
+      id: 'window',
+      when: { notComplete: 'fireControl', by: 140 },
+      effects: [{ setCondition: 'window-failed' }],
+      explanation: 'Without fire control the 903 window fails and fire laps toward the tenth floor (auto-exposure).',
+    },
+  ],
+  examples: {
+    initialReport: [
+      '{DISPATCH}, {OWN} on scene, mega twelve-story high-rise condominium, light smoke showing from the ninth floor on the Alpha side. {OWN} is taking Stair A to the eighth floor for a standpipe attack, fire control and primary search. Offensive. All other units continue in. {OWN} establishing {COMMAND}.',
+    ],
+    followUp: [
+      '{COMMAND} to {DISPATCH}, lobby recon complete, 360 not possible due to the dune and seawall on Charlie. Panel shows smoke and water flow in 903. Resident of 905 on oxygen not accounted for. Stair A is the attack stair, Stair B for evacuation. Remaining offensive. Accountability is in the lobby.',
+    ],
+    assignments: [
+      { role: 'E2', task: 'waterSupply', text: '{E2}, from {COMMAND}, establish water supply and supply the FDC on the Alpha side.' },
+      { role: 'L1', task: 'lobby', text: '{L1}, from {COMMAND}, take lobby control and the elevators in the main lobby.' },
+      { role: 'R1', task: 'primarySearch', text: '{R1}, from {COMMAND}, primary search of the ninth floor, starting with 905, use Stair B.' },
+      { role: 'E3', task: 'checkExtension', text: '{E3}, from {COMMAND}, check for extension on the tenth floor above 903, use Stair A.' },
+    ],
+    transfer: [],
+  },
+  explanations: {
+    initialReport:
+      'For a high-rise, describe the building (mega, number of stories, condominium), what is showing and on which floor, and a standpipe attack from the floor below. Bring the full assignment — high-rise fires are labor-intensive.',
+    followUp:
+      'The lobby recon replaces the 360 here: alarm panel information, the unaccounted resident, which stair is for attack and which for evacuation — and that a full 360 is not possible.',
+    assignments: 'Water supply to the FDC, lobby and elevator control, search of the fire floor (905 first) and the floor above are the critical early tasks.',
+    transfer: 'Brief the chief on 903, the 905 resident, the stairs in use, who is on 9 and 10, FDC supply, and remaining priorities above the fire.',
+  },
+  endWhen: 'transfer',
+};

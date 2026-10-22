@@ -40,7 +40,7 @@ export function scoreSession(state: SimState, rubric: RubricConfig): SessionScor
     const grades = state.grades.filter((g) => g.grade.section === 'assignments' && !g.superseded).map((g) => g.grade);
     const items = drill
       ? (grades[grades.length - 1]?.items ?? missingSection(rubric, 'assignments', 'No assignment was given.'))
-      : gradeAssignmentsSession({ instance: inst, rubric, transmissions: grades, assignments: state.assignments, units: state.units, log: state.log, endT: state.t });
+      : gradeAssignmentsSession({ instance: inst, rubric, transmissions: grades, assignments: state.assignments, units: state.units, log: state.log, endT: state.t, finalStrategy: state.declaredStrategy });
     const applicable = items.some((i) => i.status !== 'na');
     sections.push({ section: 'assignments', applicable, items, grades, score: applicable ? scoreItems(items, rubric) : null });
   }

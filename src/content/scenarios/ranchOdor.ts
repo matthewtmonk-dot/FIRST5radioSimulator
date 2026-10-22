@@ -185,7 +185,7 @@ export const ranchOdor: ScenarioTemplateInput = {
         events: [
           {
             id: 'wall-shows',
-            when: { after: 'investigateComplete', delay: 5 },
+            when: { after: 'investigateComplete', delay: 0 },
             effects: [
               { setCondition: 'wall-fire' },
               { radio: { from: 'OWN', text: '{OWN} engineer to {COMMAND}, I now have light smoke from the eaves on the Bravo side.' } },

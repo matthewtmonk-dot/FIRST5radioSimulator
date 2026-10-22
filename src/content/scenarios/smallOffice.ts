@@ -1,0 +1,182 @@
+import type { ScenarioTemplateInput } from '../../domain/scenario/schema';
+import { fire, glow, smoke } from '../helpers';
+
+// Small office at night: working fire in a front office, and the water supply
+// is delayed by an out-of-service hydrant. Tank water has to be managed.
+export const smallOffice: ScenarioTemplateInput = {
+  id: 'small-office-delayed-water',
+  title: 'Office fire with a delayed water supply',
+  summary:
+    'Closed one-story professional office. Fire in a front office at the Alpha/Delta corner. The first hydrant is out of service, so the supply line takes much longer; the engineer reports tank levels.',
+  difficulty: 'intermediate',
+  tags: ['commercial', 'working fire', 'delayed water supply', 'night', 'power lines'],
+  building: {
+    archetype: 'small-office',
+    occupancy: 'commercial',
+    acceptableOccupancies: ['commercial'],
+    occupancyLabel: 'one-story professional office building',
+    size: 'medium',
+    acceptableSizes: ['small', 'medium'],
+    stories: 1,
+    acceptableStories: [1],
+    construction: 'Block walls, wood truss roof, drop ceilings',
+    basement: false,
+    basementRelevant: false,
+    features: ['drop ceilings', 'service drop on Delta', 'rear door to parking'],
+  },
+  setting: { streetKind: 'commercial', placeName: 'Coastline Professional Center' },
+  dispatch: {
+    nature: 'Commercial structure fire',
+    callerReport: 'Alarm company reports a smoke detector at an office building; a passing driver reports smoke and an orange glow in a front window.',
+    notes: ['The business is closed. Keyholder is 20 minutes out.'],
+  },
+  occupants: { dispatchInfo: 'Business is closed; no one is believed inside.', status: 'none' },
+  units: [
+    { role: 'E2', type: 'engine', arrival: 70 },
+    { role: 'L1', type: 'ladder', arrival: 110 },
+    { role: 'E3', type: 'engine', arrival: 150 },
+    { role: 'BC', type: 'battalion', arrival: 225 },
+  ],
+  conditionStates: [
+    {
+      id: 'arrival',
+      description: 'Fire in the front office at the Alpha/Delta corner. Glow and dark smoke at the corner window, gray smoke from the eaves.',
+      problem: 'working-fire',
+      acceptableProblems: ['working-fire'],
+      acceptableStrategies: ['offensive'],
+      location: { side: 'alpha', floor: 1, area: 'front office', areaTerms: ['office', 'corner', 'delta', 'front', 'alpha delta'] },
+      conditionTerms: ['office fire', 'working fire', 'front office'],
+      emitters: [
+        glow('alpha', 'win-a4', 0.65),
+        smoke('alpha', 'win-a4', 0.45, { color: 'dark-gray', pressure: 'pushing' }),
+        smoke('alpha', 'win-a3', 0.2, { color: 'gray', pressure: 'lazy' }),
+        smoke('alpha', 'eaves-main', 0.3, { color: 'gray', pressure: 'moderate', spread: 1.2 }),
+        glow('delta', 'win-d1', 0.5),
+        smoke('delta', 'win-d1', 0.4, { color: 'dark-gray', pressure: 'moderate' }),
+        smoke('delta', 'eaves-main', 0.3, { color: 'gray', pressure: 'moderate' }),
+      ],
+    },
+    {
+      id: 'growing',
+      description: 'The corner window has failed. Flames from the window, heavier smoke from the eaves, fire in the ceiling space over the front offices.',
+      problem: 'working-fire',
+      acceptableProblems: ['working-fire'],
+      acceptableStrategies: ['offensive'],
+      location: { side: 'alpha', floor: 1, area: 'front office', areaTerms: ['office', 'corner', 'delta', 'front', 'ceiling', 'attic'] },
+      conditionTerms: ['fire in the ceiling', 'extending', 'office fire'],
+      emitters: [
+        glow('alpha', 'win-a4', 0.85),
+        fire('alpha', 'win-a4', 0.5),
+        smoke('alpha', 'win-a4', 0.6, { color: 'black', pressure: 'pushing' }),
+        smoke('alpha', 'win-a3', 0.4, { color: 'dark-gray', pressure: 'moderate' }),
+        smoke('alpha', 'eaves-main', 0.55, { color: 'dark-gray', pressure: 'pushing', spread: 2 }),
+        glow('delta', 'win-d1', 0.7),
+        fire('delta', 'win-d1', 0.3),
+        smoke('delta', 'eaves-main', 0.5, { color: 'dark-gray', pressure: 'pushing', spread: 1.4 }),
+        smoke('bravo', 'eaves-main', 0.2, { color: 'gray', pressure: 'lazy' }),
+      ],
+    },
+    {
+      id: 'knockdown',
+      description: 'Fire knocked down in the front offices. Steam and light smoke.',
+      problem: 'light-smoke',
+      acceptableProblems: ['light-smoke', 'working-fire'],
+      acceptableStrategies: ['offensive'],
+      location: { side: 'alpha', floor: 1, area: 'front office', areaTerms: ['office', 'corner', 'delta', 'front'] },
+      conditionTerms: ['knockdown', 'knocked down', 'fire is out', 'under control'],
+      emitters: [smoke('alpha', 'win-a4', 0.25, { color: 'white', pressure: 'lazy' }), smoke('delta', 'win-d1', 0.15, { color: 'white', pressure: 'lazy' })],
+    },
+  ],
+  initialCondition: 'arrival',
+  findings: [
+    {
+      id: 'service',
+      side: 'delta',
+      text: 'The overhead service drop lands on the Delta wall right above the burning office window.',
+      kind: 'hazard',
+      safety: true,
+      reportable: 'required',
+      match: [['service drop'], ['power'], ['lines'], ['wires'], ['electric']],
+    },
+    {
+      id: 'rear',
+      side: 'charlie',
+      text: 'Charlie side: steel rear door, nothing showing; light smoke at the rear soffit.',
+      kind: 'conditions',
+      reportable: 'recommended',
+      match: [['charlie', 'nothing'], ['rear door'], ['charlie', 'light smoke'], ['rear', 'soffit']],
+    },
+  ],
+  recon: { kind: '360', label: 'Walk the 360', duration: 45, full360Possible: true },
+  expectations: {
+    initialActions: ['attack-line', 'quick-attack', 'supply-line'],
+    actionLocationTerms: ['front door', 'main entrance', 'alpha', 'entry', 'front'],
+    objectives: ['fireControl', 'primarySearch'],
+    resourceDecisions: ['level1', 'continue', 'upgrade'],
+    criticalTasks: ['fireControl', 'primarySearch', 'waterSupply'],
+    expectedTasks: ['checkExtension', 'utilities', 'rit'],
+    followUpExpected: true,
+    transferExpected: true,
+    accountabilityExpected: true,
+    transferPriorities: ['water supply', 'hydrant', 'ceiling', 'extension', 'power company'],
+  },
+  taskOutcomes: {
+    waterSupply: { duration: 210, report: '{unit} to {command}, water supply established from the hydrant at Coral and Seaview.' },
+    fireControl: { duration: 120, report: '{unit} to {command}, knockdown in the front office. We need the ceiling opened up.', effects: [{ setCondition: 'knockdown' }] },
+    primarySearch: { duration: 100, report: '{unit} to {command}, primary search complete, all clear.' },
+    checkExtension: { duration: 90, report: '{unit} to {command}, ceiling pulled over the front offices, fire stopped at the hallway.' },
+  },
+  events: [
+    {
+      id: 'hydrant-oos',
+      when: { task: 'waterSupply', status: 'assigned', delay: 35 },
+      effects: [
+        {
+          radio: {
+            from: 'E2',
+            text: '{E2} to {COMMAND}, the hydrant at the entrance is bagged out of service. We are going to the next hydrant at Coral and Seaview, about 800 feet. It will be a few minutes.',
+            requiresAck: true,
+          },
+        },
+      ],
+      explanation: 'A delayed water supply means the attack line runs on tank water. Acknowledge it, keep the line short and consider a second supply or tanker.',
+    },
+    {
+      id: 'tank-half',
+      when: { at: 120 },
+      effects: [{ radio: { from: 'OWN', text: '{OWN} engineer to {COMMAND}, half a tank remaining.', requiresAck: true } }],
+    },
+    {
+      id: 'tank-quarter',
+      when: { allOf: [{ at: 185 }, { notComplete: 'waterSupply', by: 185 }] },
+      effects: [{ radio: { from: 'OWN', text: '{OWN} engineer to {COMMAND}, quarter tank. Still no water supply.', requiresAck: true } }],
+    },
+    {
+      id: 'grows',
+      when: { notComplete: 'fireControl', by: 120 },
+      effects: [{ setCondition: 'growing' }],
+      explanation: 'Without fire control the front office flashes into the ceiling space.',
+    },
+  ],
+  examples: {
+    initialReport: [
+      '{DISPATCH}, {OWN} on scene, medium one-story office building, working fire in the front office at the Alpha Delta corner. {OWN} is stretching an attack line through the front entrance for fire control and primary search. Offensive. All other units Level One staging. {OWN} establishing {COMMAND}.',
+    ],
+    followUp: [
+      '{COMMAND} to {DISPATCH}, 360 complete. Charlie side nothing showing, light smoke at the rear soffit. Service drop over the fire window on Delta — notify the power company. Water supply delayed, hydrant out of service. Remaining offensive. Accountability is at {OWN}.',
+    ],
+    assignments: [
+      { role: 'E2', task: 'waterSupply', text: '{E2}, from {COMMAND}, establish water supply to {OWN} from the hydrant at the entrance.' },
+      { role: 'L1', task: 'checkExtension', text: '{L1}, from {COMMAND}, check for extension in the ceiling over the front offices, enter through the front entrance.' },
+      { role: 'E3', task: 'rit', text: '{E3}, from {COMMAND}, you are RIT on the Alpha side.' },
+    ],
+    transfer: [],
+  },
+  explanations: {
+    initialReport: 'A glow and dark smoke from a closed office at night is a working fire. Report it, go offensive with the line through the front entrance, and keep incoming units at Level One until assigned.',
+    followUp: 'The 360 adds the service drop over the fire window. Include the delayed water supply — everyone needs to know the attack is on tank water.',
+    assignments: 'Water supply is critical and is going to be slow — acknowledge the bad hydrant, then get the ceiling opened and a RIT in place.',
+    transfer: 'Brief the chief on water supply status (the main outstanding need), the extension check, the service drop, and unit locations.',
+  },
+  endWhen: 'transfer',
+};
