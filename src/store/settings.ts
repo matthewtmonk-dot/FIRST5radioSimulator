@@ -14,6 +14,8 @@ export type SttEngine = 'whisper' | 'webspeech' | 'off';
 export interface Prefs {
   stt: SttEngine;
   whisperModel: 'onnx-community/whisper-tiny.en' | 'onnx-community/whisper-base.en' | 'onnx-community/whisper-small.en';
+  /** Run Whisper on the graphics card (WebGPU). Off by default: on some computers it crashes the page. */
+  whisperGpu: boolean;
   autoSendTranscript: boolean;
   radioAudio: boolean;
   radioTones: boolean;
@@ -34,6 +36,7 @@ export interface Prefs {
 export const DEFAULT_PREFS: Prefs = {
   stt: 'whisper',
   whisperModel: 'onnx-community/whisper-base.en',
+  whisperGpu: false,
   autoSendTranscript: false,
   radioAudio: true,
   radioTones: true,

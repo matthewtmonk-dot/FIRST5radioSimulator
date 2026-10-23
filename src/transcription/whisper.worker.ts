@@ -1,6 +1,7 @@
 /// <reference lib="webworker" />
 // Local Whisper speech-to-text via Transformers.js (ONNX Runtime Web).
-// Uses WebGPU when available, otherwise WebAssembly on the CPU. The model is
+// Runs on the CPU (WebAssembly) by default; WebGPU only when turned on in
+// Settings, because on some computers it crashes the page. The model is
 // downloaded once from the Hugging Face hub (or served from /models/ for fully
 // offline use) and cached by the browser.
 
@@ -17,7 +18,7 @@ let loadedModel = '';
 let device: 'webgpu' | 'wasm' = 'wasm';
 
 type In =
-  | { type: 'load'; model: string; allowRemote: boolean }
+  | { type: 'load'; model: string; allowRemote: boolean; gpu: boolean }
   | { type: 'transcribe'; id: string; audio: Float32Array; prompt?: string };
 
 /** Use /models/<id>/ only when it really holds the model (a dev server answers unknown paths with index.html). */
@@ -37,11 +38,11 @@ function explain(e: unknown): string {
   return m;
 }
 
-async function load(model: string, allowRemote: boolean) {
+async function load(model: string, allowRemote: boolean, gpu: boolean) {
   if (asr && loadedModel === model) return;
   env.allowLocalModels = await hasLocalCopy(model);
   env.allowRemoteModels = allowRemote;
-  const hasGpu = 'gpu' in navigator && !!(await (navigator as Navigator & { gpu: { requestAdapter(): Promise<unknown> } }).gpu.requestAdapter().catch(() => null));
+  const hasGpu = gpu && 'gpu' in navigator && !!(await (navigator as Navigator & { gpu: { requestAdapter(): Promise<unknown> } }).gpu.requestAdapter().catch(() => null));
   device = hasGpu ? 'webgpu' : 'wasm';
   const progress = (p: { status: string; file?: string; progress?: number; loaded?: number; total?: number }) =>
     self.postMessage({ type: 'progress', status: p.status, file: p.file, progress: p.progress, loaded: p.loaded, total: p.total });
@@ -67,7 +68,7 @@ async function load(model: string, allowRemote: boolean) {
 self.onmessage = async (ev: MessageEvent<In>) => {
   const msg = ev.data;
   try {
-    if (msg.type === 'load') await load(msg.model, msg.allowRemote);
+    if (msg.type === 'load') await load(msg.model, msg.allowRemote, msg.gpu);
     if (msg.type === 'transcribe') {
       if (!asr) throw new Error('Speech model not loaded');
       const started = performance.now();

@@ -1,5 +1,6 @@
 import { lazy, Suspense, useEffect } from 'react';
 import { useSession, type Screen } from '../store/session';
+import { ErrorBoundary } from './components/ErrorBoundary';
 import { Exercise } from './screens/exercise/Exercise';
 import { Gallery } from './screens/Gallery';
 import { Home } from './screens/Home';
@@ -55,15 +56,17 @@ export function App() {
         </nav>
       </header>
       <main className="min-h-0 flex-1">
-        <Suspense fallback={<div className="p-6 text-ink-400">Loading…</div>}>
-          {screen === 'home' && <Home />}
-          {screen === 'exercise' && <Exercise />}
-          {screen === 'review' && <Review />}
-          {screen === 'history' && <History />}
-          {screen === 'settings' && <Settings />}
-          {screen === 'help' && <Help />}
-          {screen === 'builder' && <Builder />}
-        </Suspense>
+        <ErrorBoundary key={screen}>
+          <Suspense fallback={<div className="p-6 text-ink-400">Loading…</div>}>
+            {screen === 'home' && <Home />}
+            {screen === 'exercise' && <Exercise />}
+            {screen === 'review' && <Review />}
+            {screen === 'history' && <History />}
+            {screen === 'settings' && <Settings />}
+            {screen === 'help' && <Help />}
+            {screen === 'builder' && <Builder />}
+          </Suspense>
+        </ErrorBoundary>
       </main>
     </div>
   );

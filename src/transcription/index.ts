@@ -55,7 +55,7 @@ function getWorker(): Worker {
   return worker;
 }
 
-export function loadWhisper(model: string): Promise<void> {
+export function loadWhisper(model: string, gpu = false): Promise<void> {
   if (readyPromise && readyModel === model && useSttStatus.getState().whisper !== 'error') return readyPromise;
   readyModel = model;
   useSttStatus.setState({ whisper: 'loading', progress: 0, error: '', model });
@@ -71,14 +71,14 @@ export function loadWhisper(model: string): Promise<void> {
       }
     });
   });
-  w.postMessage({ type: 'load', model, allowRemote: true });
+  w.postMessage({ type: 'load', model, allowRemote: true, gpu });
   return readyPromise;
 }
 
 const HALLUCINATIONS = /^(thank you\.?|thanks for watching\.?|you\.?|\[blank_audio\]|\(.*\)|\.|bye\.?)$/i;
 
-export async function transcribeWhisper(blob: Blob, model: string, durationMs: number): Promise<TranscriptResult> {
-  await loadWhisper(model);
+export async function transcribeWhisper(blob: Blob, model: string, durationMs: number, gpu = false): Promise<TranscriptResult> {
+  await loadWhisper(model, gpu);
   const audio = await toPcm16k(blob);
   const id = Math.random().toString(36).slice(2);
   const r = await new Promise<{ text: string; ms: number }>((resolve, reject) => {

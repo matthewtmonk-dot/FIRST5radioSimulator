@@ -42,6 +42,13 @@ export class SceneRenderer {
     this.effects.night = lightingFor(inst.environment).night;
   }
 
+  /** Redraw everything after the browser dropped the canvas (GPU reset). */
+  restore() {
+    this.ctx = this.canvas.getContext('2d')!;
+    this.bgKey = '';
+    this.layout(true);
+  }
+
   get source(): 'photo' | 'procedural' {
     return this.photo?.ok ? 'photo' : 'procedural';
   }

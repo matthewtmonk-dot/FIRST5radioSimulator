@@ -35,7 +35,12 @@ export function Scene({ instance, view, emitters, reducedMotion, className, onDe
     const rect = wrap.current.getBoundingClientRect();
     r.resize(rect.width, rect.height);
     r.start();
+    // A graphics-driver reset can blank the canvas; redraw when it comes back.
+    const c = canvas.current;
+    const restored = () => r.restore();
+    c.addEventListener('contextrestored', restored);
     return () => {
+      c.removeEventListener('contextrestored', restored);
       ro.disconnect();
       r.stop();
       renderer.current = null;

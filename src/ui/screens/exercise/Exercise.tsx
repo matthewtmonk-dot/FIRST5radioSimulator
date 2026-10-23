@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { currentTask, getCondition } from '../../../domain/engine/engine';
+import { ErrorBoundary } from '../../components/ErrorBoundary';
 import { SIDES, type Side } from '../../../domain/scenario/schema';
 import { useSession } from '../../../store/session';
 import { useSettings } from '../../../store/settings';
@@ -81,40 +82,42 @@ export function Exercise() {
             </div>
           ) : (
             <div className="relative aspect-video max-h-[60vh] w-full lg:col-start-1 lg:row-start-1 lg:aspect-auto lg:max-h-none lg:min-h-[220px]">
-              <Scene instance={inst} view={view} emitters={emitters} reducedMotion={prefs.reducedMotion} className="absolute inset-0">
-                <div className="absolute left-2 top-2 flex gap-1" role="tablist" aria-label="Building side">
-                  {SIDES.map((s) => {
-                    const open = sim.revealedViews.includes(s);
-                    return (
-                      <button
-                        key={s}
-                        role="tab"
-                        aria-selected={view === s}
-                        disabled={!open}
-                        title={open ? `${s} side` : 'Walk the 360 to see this side'}
-                        onClick={() => setView(s)}
-                        className={`rounded px-2.5 py-1 text-xs font-semibold uppercase tracking-wider backdrop-blur ${
-                          view === s ? 'bg-signal-amber text-ink-950' : open ? 'bg-black/60 text-ink-100 hover:bg-black/80' : 'cursor-not-allowed bg-black/60 text-ink-300'
-                        }`}
-                      >
-                        {open ? s : `${s} 🔒`}
-                      </button>
-                    );
-                  })}
-                </div>
-                {prefs.captions && speaking && <Caption text={sim.log.find((e) => e.id === speaking)} />}
-                {store.paused && (
-                  <div className="absolute inset-0 flex items-center justify-center bg-black/60 text-lg font-semibold tracking-widest text-ink-100">PAUSED</div>
-                )}
-                {sim.ended && !feedback && (
-                  <div className="absolute inset-x-0 bottom-0 flex flex-wrap items-center justify-between gap-2 bg-black/75 p-3">
-                    <span className="text-sm text-ink-100">{endText(sim.ended.reason)}</span>
-                    <Button variant="primary" onClick={() => void store.finish()} data-testid="view-review">
-                      View after-action review
-                    </Button>
+              <ErrorBoundary area="the building view" inline>
+                <Scene instance={inst} view={view} emitters={emitters} reducedMotion={prefs.reducedMotion} className="absolute inset-0">
+                  <div className="absolute left-2 top-2 flex gap-1" role="tablist" aria-label="Building side">
+                    {SIDES.map((s) => {
+                      const open = sim.revealedViews.includes(s);
+                      return (
+                        <button
+                          key={s}
+                          role="tab"
+                          aria-selected={view === s}
+                          disabled={!open}
+                          title={open ? `${s} side` : 'Walk the 360 to see this side'}
+                          onClick={() => setView(s)}
+                          className={`rounded px-2.5 py-1 text-xs font-semibold uppercase tracking-wider backdrop-blur ${
+                            view === s ? 'bg-signal-amber text-ink-950' : open ? 'bg-black/60 text-ink-100 hover:bg-black/80' : 'cursor-not-allowed bg-black/60 text-ink-300'
+                          }`}
+                        >
+                          {open ? s : `${s} 🔒`}
+                        </button>
+                      );
+                    })}
                   </div>
-                )}
-              </Scene>
+                  {prefs.captions && speaking && <Caption text={sim.log.find((e) => e.id === speaking)} />}
+                  {store.paused && (
+                    <div className="absolute inset-0 flex items-center justify-center bg-black/60 text-lg font-semibold tracking-widest text-ink-100">PAUSED</div>
+                  )}
+                  {sim.ended && !feedback && (
+                    <div className="absolute inset-x-0 bottom-0 flex flex-wrap items-center justify-between gap-2 bg-black/75 p-3">
+                      <span className="text-sm text-ink-100">{endText(sim.ended.reason)}</span>
+                      <Button variant="primary" onClick={() => void store.finish()} data-testid="view-review">
+                        View after-action review
+                      </Button>
+                    </div>
+                  )}
+                </Scene>
+              </ErrorBoundary>
             </div>
           )}
 
@@ -152,17 +155,19 @@ export function Exercise() {
               </button>
             ))}
           </div>
-          {side === 'radio' && <RadioLog sim={sim} speaking={speaking} showScores={coaching} />}
-          {side === 'board' && (
-            <div className="scroll-thin flex-1 overflow-y-auto">
-              <CommandBoard sim={sim} />
-            </div>
-          )}
-          {side === 'coach' && coaching && (
-            <div className="scroll-thin flex-1 overflow-y-auto">
-              <CoachPanel sim={sim} />
-            </div>
-          )}
+          <ErrorBoundary key={side} area="this panel" inline>
+            {side === 'radio' && <RadioLog sim={sim} speaking={speaking} showScores={coaching} />}
+            {side === 'board' && (
+              <div className="scroll-thin flex-1 overflow-y-auto">
+                <CommandBoard sim={sim} />
+              </div>
+            )}
+            {side === 'coach' && coaching && (
+              <div className="scroll-thin flex-1 overflow-y-auto">
+                <CoachPanel sim={sim} />
+              </div>
+            )}
+          </ErrorBoundary>
         </div>
       
         {/* Transmit — sticky at the bottom on small screens */}

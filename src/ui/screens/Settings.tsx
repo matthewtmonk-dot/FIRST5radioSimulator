@@ -119,13 +119,19 @@ function SpeechSettings() {
                 <option value="onnx-community/whisper-small.en">small.en (~250 MB, best accuracy, needs WebGPU)</option>
               </select>
             </Row>
+            <Row
+              label="Use the graphics card (WebGPU)"
+              help="Faster on some computers, but on others it can crash the page to a black screen. Leave off unless speech is too slow. Takes effect after reloading the page."
+            >
+              <Toggle k="whisperGpu" />
+            </Row>
             <Row label="Model status">
               <Badge tone={stt.whisper === 'ready' ? 'green' : stt.whisper === 'error' ? 'red' : stt.whisper === 'loading' ? 'amber' : 'neutral'}>
                 {stt.whisper === 'loading' ? `loading ${stt.progress}%` : stt.whisper}
               </Badge>
               {stt.device && <span className="text-xs text-ink-400">running on {stt.device === 'webgpu' ? 'GPU (WebGPU)' : 'CPU (WebAssembly)'}</span>}
               {stt.error && <span className="text-xs text-signal-red">{stt.error}</span>}
-              <Button className="!min-h-8 text-xs" onClick={() => loadWhisper(prefs.whisperModel).catch(() => {})} disabled={stt.whisper === 'loading'}>
+              <Button className="!min-h-8 text-xs" onClick={() => loadWhisper(prefs.whisperModel, prefs.whisperGpu).catch(() => {})} disabled={stt.whisper === 'loading'}>
                 {stt.whisper === 'ready' ? 'Reload' : 'Download / load now'}
               </Button>
             </Row>

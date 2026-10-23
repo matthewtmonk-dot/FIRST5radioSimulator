@@ -34,11 +34,12 @@ export function usePushToTalk(onResult: (r: PttResult) => void, opts: { enabled:
 
   const engine = useSettings((s) => s.prefs.stt);
   const model = useSettings((s) => s.prefs.whisperModel);
+  const gpu = useSettings((s) => s.prefs.whisperGpu ?? false);
 
   // Start downloading the speech model as soon as an exercise opens.
   useEffect(() => {
-    if (opts.enabled && engine === 'whisper') loadWhisper(model).catch(() => {});
-  }, [opts.enabled, engine, model]);
+    if (opts.enabled && engine === 'whisper') loadWhisper(model, gpu).catch(() => {});
+  }, [opts.enabled, engine, model, gpu]);
 
   const down = useCallback(async () => {
     if (!opts.enabled || held.current || engine === 'off') return;
@@ -111,7 +112,7 @@ export function usePushToTalk(onResult: (r: PttResult) => void, opts: { enabled:
         const t = await l.stop();
         out = { text: t.text, original: t.text, source: 'webspeech', lowConfidence: t.lowConfidence, audioId };
       } else {
-        const t = await transcribeWhisper(blob, model, durationMs);
+        const t = await transcribeWhisper(blob, model, durationMs, gpu);
         out = { text: t.text, original: t.text, source: 'whisper', lowConfidence: t.lowConfidence, audioId };
       }
       setInterim('');
@@ -121,7 +122,7 @@ export function usePushToTalk(onResult: (r: PttResult) => void, opts: { enabled:
       setPhase('idle');
       setError(`Transcription failed (${(e as Error).message}). Type the transmission instead — your audio was kept for review.`);
     }
-  }, [model]);
+  }, [model, gpu]);
 
   return { phase, interim, error, level, down, up, engine, clearError: () => setError('') };
 }

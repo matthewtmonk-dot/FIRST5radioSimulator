@@ -3,7 +3,7 @@
 // - Speech model files (huggingface.co or /models/) and the ONNX runtime:
 //   cached on first download so Whisper keeps working offline.
 // Nothing is ever sent anywhere; this only caches what the browser fetched.
-const VERSION = 'ff-v3';
+const VERSION = 'ff-v4';
 const SHELL = `${VERSION}-shell`;
 const MODELS = 'ff-models'; // not versioned: model files are large and immutable
 
