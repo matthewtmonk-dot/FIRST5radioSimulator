@@ -8,9 +8,9 @@ import { env, pipeline, type AutomaticSpeechRecognitionPipeline } from '@hugging
 
 declare const self: DedicatedWorkerGlobalScope;
 
-env.localModelPath = '/models/';
+env.localModelPath = `${import.meta.env.BASE_URL}models/`;
 // ONNX Runtime binaries are served locally (copied to /ort by scripts/copy-ort.mjs)
-if (env.backends.onnx.wasm) env.backends.onnx.wasm.wasmPaths = '/ort/';
+if (env.backends.onnx.wasm) env.backends.onnx.wasm.wasmPaths = `${import.meta.env.BASE_URL}ort/`;
 
 let asr: AutomaticSpeechRecognitionPipeline | null = null;
 let loadedModel = '';
@@ -23,7 +23,7 @@ type In =
 /** Use /models/<id>/ only when it really holds the model (a dev server answers unknown paths with index.html). */
 async function hasLocalCopy(model: string) {
   try {
-    const r = await fetch(`/models/${model}/config.json`, { method: 'GET' });
+    const r = await fetch(`${import.meta.env.BASE_URL}models/${model}/config.json`, { method: 'GET' });
     return r.ok && (r.headers.get('content-type') ?? '').includes('json');
   } catch {
     return false;

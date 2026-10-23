@@ -3,19 +3,23 @@
 // - Speech model files (huggingface.co or /models/) and the ONNX runtime:
 //   cached on first download so Whisper keeps working offline.
 // Nothing is ever sent anywhere; this only caches what the browser fetched.
-const VERSION = 'ff-v2';
+const VERSION = 'ff-v3';
 const SHELL = `${VERSION}-shell`;
 const MODELS = 'ff-models'; // not versioned: model files are large and immutable
 
 // Precache the shell plus every script and stylesheet index.html references
 // (their names carry build hashes, so they are read from the page itself).
+// Paths are relative to where the app is served (site root or a sub-folder).
+const BASE = new URL(self.registration.scope).pathname;
+const INDEX = `${BASE}index.html`;
+
 async function precache() {
   const c = await caches.open(SHELL);
-  await c.addAll(['/manifest.webmanifest', '/icon.svg']);
-  const res = await fetch('/index.html', { cache: 'no-store' });
+  await c.addAll([`${BASE}manifest.webmanifest`, `${BASE}icon.svg`]);
+  const res = await fetch(INDEX, { cache: 'no-store' });
   const html = await res.clone().text();
-  await c.put('/index.html', res);
-  const assets = [...html.matchAll(/(?:src|href)="(\/assets\/[^"]+)"/g)].map((m) => m[1]);
+  await c.put(INDEX, res);
+  const assets = [...html.matchAll(/(?:src|href)="([^"]*\/assets\/[^"]+)"/g)].map((m) => m[1]);
   await c.addAll(assets);
 }
 
@@ -33,7 +37,7 @@ self.addEventListener('activate', (event) => {
 });
 
 const isModel = (url) =>
-  url.hostname.endsWith('huggingface.co') || url.hostname.endsWith('hf.co') || url.pathname.startsWith('/models/') || url.pathname.startsWith('/ort/');
+  url.hostname.endsWith('huggingface.co') || url.hostname.endsWith('hf.co') || url.pathname.startsWith(`${BASE}models/`) || url.pathname.startsWith(`${BASE}ort/`);
 
 self.addEventListener('fetch', (event) => {
   const req = event.request;
@@ -61,10 +65,10 @@ self.addEventListener('fetch', (event) => {
       fetch(req)
         .then((res) => {
           const copy = res.clone();
-          caches.open(SHELL).then((c) => c.put('/index.html', copy));
+          caches.open(SHELL).then((c) => c.put(INDEX, copy));
           return res;
         })
-        .catch(() => caches.match('/index.html', { ignoreVary: true })),
+        .catch(() => caches.match(INDEX, { ignoreVary: true })),
     );
     return;
   }
