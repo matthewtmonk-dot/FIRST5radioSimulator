@@ -6,7 +6,11 @@ It runs entirely in your browser. There is no server, no account, no subscriptio
 
 > **Training aid only.** The initial report, follow-up and unit assignment checklist items follow the wording of the Engine Company Incident Command Board (Station 14 copy). The command transfer items are not on that board and are **provisional**, and so are the scoring weights. You can edit all of it under Settings → Rubric. It is not an official Blue Card product, and it is not certified or endorsed by any agency. Addresses, businesses and incidents are fictional. Unit names and the response plan are samples that you set under Settings → Response plan.
 
-## Quick start
+## Open it
+
+**Online:** https://matthewtmonk-dot.github.io/FIRST5radioSimulator/ works in Chrome or Edge on a computer, phone or tablet, with nothing to install. A new copy is published automatically on every push to `main`. The first time, GitHub Pages has to be switched on: in the repository, open Settings → Pages and set Source to "GitHub Actions".
+
+## Quick start (run it on your own computer)
 
 You need [Node.js](https://nodejs.org) 20 or newer.
 
