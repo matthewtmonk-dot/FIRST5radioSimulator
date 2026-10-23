@@ -207,7 +207,7 @@ export const ranchOdor: ScenarioTemplateInput = {
             '{DISPATCH}, {OWN} on scene, small one-story residential, nothing showing. {OWN} will be investigating. All other units Level One staging. {OWN} establishing {COMMAND}.',
           ],
           followUp: [
-            '{COMMAND} to {DISPATCH}, 360 complete. Fire in the wall of the Bravo-side bedroom, light smoke from the Bravo eaves. No basement. Switching to offensive, {OWN} has fire control in the Bravo bedroom. Bring in all Level One units. Accountability is at {OWN}.',
+            '{COMMAND} to {DISPATCH}, 360 complete. Fire in the wall of the Bravo-side bedroom, light smoke from the Bravo eaves. No basement. Switching to offensive, {OWN} has fire control in the Bravo bedroom. Bring in all Level One units. Accountability is on Alpha at {OWN}.',
           ],
           assignments: [
             { role: 'E2', task: 'waterSupply', text: '{E2}, from {COMMAND}, establish water supply to {OWN}.' },

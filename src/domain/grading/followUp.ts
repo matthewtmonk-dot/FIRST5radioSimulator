@@ -106,7 +106,7 @@ export function gradeFollowUp(text: string, ctx: FollowUpContext): TransmissionG
       const after = t.slice(acc[0].end, acc[0].end + 40);
       const hasLoc = /\b(at|on|is|will be|in)\b/.test(after) && /(engine|ladder|tower|rescue|command|alpha|bravo|charlie|delta|side|post|front|rear|apparatus|tailboard|lobby|stair|entrance|corner)/.test(after);
       items.push(hasLoc ? result(rubric, 'fu.accountability', 'correct', 'Accountability location given.', { heard: acc[0].text }) : result(rubric, 'fu.accountability', 'partial', 'Accountability mentioned without a location.', { heard: acc[0].text }));
-    } else items.push(result(rubric, 'fu.accountability', 'missing', 'Crews are committed — give the accountability location.', { expected: `Accountability at ${inst.ownUnit}` }));
+    } else items.push(result(rubric, 'fu.accountability', 'missing', 'Crews are committed — give the accountability location.', { expected: `Accountability location by side (Alpha, Bravo, Charlie or Delta)` }));
   }
 
   const statements = unsupportedClaims(t, { ...ctx.benchmarks, occupantsConfirmedOut: inst.occupants.status === 'all-out' });

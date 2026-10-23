@@ -31,7 +31,7 @@ export function dynamicFollowUpExample(s: SimState): string {
     basement,
     finds ? `${finds}.` : '',
     s.declaredStrategy && s.declaredStrategy !== strategyNow(s) ? `Switching to ${strategyNow(s)}.` : `Remaining ${strategyNow(s)}.`,
-    interior ? `Accountability is at ${inst.ownUnit}.` : '',
+    interior ? `Accountability is on Alpha at ${inst.ownUnit}.` : '',
   ]
     .filter(Boolean)
     .join(' ');

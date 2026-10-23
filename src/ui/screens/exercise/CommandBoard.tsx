@@ -4,17 +4,21 @@
 import { benchmarks } from '../../../domain/engine/engine';
 import type { SimState } from '../../../domain/engine/types';
 import { TASK_INFO } from '../../../domain/language/tasks';
-import { SECTION_LABELS, type SectionId } from '../../../domain/rubric/config';
+import { BOARD_REFERENCE, SECTION_LABELS, type SectionId } from '../../../domain/rubric/config';
 import { useSettings } from '../../../store/settings';
 import { fmtTime } from '../../components/ui';
 
 export function CommandBoard({ sim }: { sim: SimState }) {
   const b = benchmarks(sim);
   const reported = (kw: RegExp) => sim.log.some((e) => e.kind === 'unit' && kw.test(e.text));
+  // Tactical priorities as listed on the command board, plus water supply.
+  // Fire control, secondary all clear and loss stopped come after the first
+  // five minutes and are not simulated.
   const marks = [
+    { label: 'Water on fire', on: b.waterOnFire },
     { label: 'Primary all clear', on: b.primaryClear && reported(/all clear|primary.*(clear|complete)/i) },
+    { label: 'Fire knock down', on: b.knockdown && reported(/knock ?down|fire (is )?out|under control/i) },
     { label: 'Water supply', on: b.waterSupply && reported(/water supply|hydrant|supply line/i) },
-    { label: 'Knockdown', on: b.knockdown && reported(/knock ?down|fire (is )?out|under control/i) },
   ];
   return (
     <div className="space-y-3 p-3 text-sm">
@@ -25,7 +29,7 @@ export function CommandBoard({ sim }: { sim: SimState }) {
         <Field label="360" value={sim.recon.status === 'complete' ? 'Complete' : sim.recon.status === 'inProgress' ? 'In progress' : 'Not started'} />
       </div>
       <div>
-        <div className="mb-1 text-[11px] font-semibold uppercase tracking-wider text-ink-400">Benchmarks</div>
+        <div className="mb-1 text-[11px] font-semibold uppercase tracking-wider text-ink-400">Tactical priorities</div>
         <div className="flex flex-wrap gap-1.5">
           {marks.map((m) => (
             <span key={m.label} className={`rounded border px-2 py-0.5 text-xs ${m.on ? 'border-signal-green/50 bg-signal-green/10 text-signal-green' : 'border-ink-600 text-ink-400'}`}>
@@ -89,10 +93,33 @@ function ReferenceCard() {
             </div>
           </div>
         ))}
-        <div className="text-ink-500">F/C Fire control · P/S Primary search · W/S Water supply · L/C Loss control · O/D On deck</div>
-        {rubric.provisional && <div className="text-ink-500">Provisional — replace with the department board in Settings.</div>}
+        <div className="text-ink-500">{BOARD_REFERENCE.objectives}</div>
+        <RefList title="Tactical priorities" items={BOARD_REFERENCE.tacticalPriorities} />
+        <div>
+          <div className="font-semibold text-ink-200">Communication tickets</div>
+          <ul className="mt-0.5 space-y-0.5 text-ink-300">
+            {BOARD_REFERENCE.communicationTickets.map(([name, text]) => (
+              <li key={name}>
+                <span className={name === 'Mayday' ? 'font-semibold text-signal-red' : 'font-semibold text-ink-200'}>{name}</span> — {text}
+              </li>
+            ))}
+          </ul>
+        </div>
+        <RefList title="Mayday help order" items={BOARD_REFERENCE.maydayHelpOrder} />
+        <RefList title="Mayday checklist" items={BOARD_REFERENCE.maydayChecklist} />
+        <RefList title="Big box entry requirements" items={BOARD_REFERENCE.bigBoxEntry} />
+        {rubric.provisional && <div className="text-ink-500">Training reference based on the Engine Company Incident Command Board. Command transfer items are provisional. Not an official standard.</div>}
       </div>
     </details>
+  );
+}
+
+function RefList({ title, items }: { title: string; items: string[] }) {
+  return (
+    <div>
+      <div className="font-semibold text-ink-200">{title}</div>
+      <div className="text-ink-300">{items.join(' · ')}</div>
+    </div>
   );
 }
 

@@ -148,7 +148,7 @@ export const twoStoryKitchen: ScenarioTemplateInput = {
       '{DISPATCH}, {OWN} on scene, medium two-story residential, working fire in the first-floor kitchen on the Alpha side. {OWN} is stretching an attack line through the front door for fire control and primary search. Offensive. Everyone else Level One staging. {OWN} establishing {COMMAND}.',
     ],
     followUp: [
-      '{COMMAND} to {DISPATCH}, 360 complete. No basement. Smoke from both second-floor windows on Charlie. Gas meter on Delta. Remaining offensive. Accountability is at {OWN}.',
+      '{COMMAND} to {DISPATCH}, 360 complete. No basement. Smoke from both second-floor windows on Charlie. Gas meter on Delta. Remaining offensive. Accountability is on Alpha at {OWN}.',
     ],
     assignments: [
       { role: 'E2', task: 'waterSupply', text: '{E2}, from {COMMAND}, establish water supply to {OWN}, then back up the attack line.' },

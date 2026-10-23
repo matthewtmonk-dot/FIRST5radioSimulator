@@ -1,7 +1,8 @@
 // Instructor-configurable rubric, terminology and response-plan settings.
-// PROVISIONAL: these items are drawn from the FIRST FIVE build brief (section 2),
-// not from the department's Engine Company Incident Command Board. They must be
-// validated against approved VCFR instructional language before being treated as policy.
+// The initial report, follow-up and unit assignment items follow the wording of
+// the VCFR Engine Company Incident Command Board (Station 14 copy, provided by
+// the project's instructor). The command transfer items are not on that board
+// and remain provisional. Nothing here is an official or certified standard.
 
 import type { UnitType } from '../scenario/schema';
 
@@ -63,41 +64,41 @@ const item = (
 });
 
 export const DEFAULT_RUBRIC: RubricConfig = {
-  version: 1,
+  version: 2,
   provisional: true,
   source:
-    'Provisional checklist derived from the FIRST FIVE build brief (Blue Card-style framework). Not taken from the VCFR Engine Company Incident Command Board and not an official or certified standard. Awaiting instructor validation.',
+    'Initial Radio Report, Follow-Up Report and Unit Assignment items follow the wording of the Engine Company Incident Command Board (Station 14 copy). Command Transfer items are not on the board and are provisional. Weights, penalties and pass levels are training choices, not department policy. Not an official or certified standard.',
   items: [
     item('initialReport', 'ir.onScene', 'Unit on scene', 0.5, 'Did you identify your unit and that you are on scene?'),
-    item('initialReport', 'ir.size', 'Building size', 1.5, 'How big is the building: small, medium, large or mega?', { board: 'Size' }),
-    item('initialReport', 'ir.height', 'Building height', 1.5, 'How many stories?', { board: 'Height' }),
-    item('initialReport', 'ir.occupancy', 'Occupancy type', 1.5, 'What kind of occupancy is it?', { board: 'Occupancy' }),
-    item('initialReport', 'ir.problem', 'Problem / conditions', 3, 'What do you see: nothing showing, light smoke, working fire, or defensive conditions?', { critical: true, board: 'Problem' }),
-    item('initialReport', 'ir.location', 'Location of the problem', 2, 'Where is the problem (side, floor, area)?', { board: 'Location' }),
-    item('initialReport', 'ir.action', 'Initial task', 3, 'What is your crew doing first?', { critical: true, board: 'Task' }),
-    item('initialReport', 'ir.actionLocation', 'Location of assigned work', 1, 'Where is that work being done?', { board: 'Where' }),
-    item('initialReport', 'ir.objectives', 'Tactical objectives', 1.5, 'Which tactical objectives apply (fire control, primary search)?', { board: 'F/C · P/S' }),
-    item('initialReport', 'ir.strategy', 'Strategy', 3, 'Offensive, defensive, or investigating?', { critical: true, board: 'Strategy' }),
-    item('initialReport', 'ir.resources', 'Resource determination', 2, 'What do the incoming resources need to do: cancel, Level One staging, or upgrade?', { board: 'Resources' }),
-    item('initialReport', 'ir.command', 'Establish and name command', 3, 'Did you establish and name command?', { critical: true, board: 'Command' }),
+    item('initialReport', 'ir.size', 'Building size', 1.5, 'Size: small, medium, large or mega?', { board: 'Size S/M/L/Mega' }),
+    item('initialReport', 'ir.height', 'Building height', 1.5, 'Height: how many stories (1 to 5+)?', { board: 'Height 1–5' }),
+    item('initialReport', 'ir.occupancy', 'Occupancy type', 1.5, 'Occupancy type?', { board: 'Occupancy type' }),
+    item('initialReport', 'ir.problem', 'Problem description', 3, 'Nothing showing, light smoke, working fire, or defensive fire conditions?', { critical: true, board: 'Problem' }),
+    item('initialReport', 'ir.location', 'Location of the problem', 2, 'Location of the problem (side, floor, area)?', { board: 'Location of problem' }),
+    item('initialReport', 'ir.action', 'IAP task', 3, 'Initial incident action plan task: supply-line, stretch attack line, quick hit, or defensive operations?', { critical: true, board: 'IAP task' }),
+    item('initialReport', 'ir.actionLocation', 'IAP location', 1, 'Where is that task being done?', { board: 'IAP location' }),
+    item('initialReport', 'ir.objectives', 'IAP objectives', 1.5, 'Objectives: fire control, primary search?', { board: 'Objectives F/C · P/S' }),
+    item('initialReport', 'ir.strategy', 'Strategy', 3, 'Strategy: offensive, defensive, or investigating?', { critical: true, board: 'Strategy' }),
+    item('initialReport', 'ir.resources', 'Resource determination', 2, 'Cancel additional, Level One staging, or upgrade to a 2nd+ alarm?', { board: 'Resource determination' }),
+    item('initialReport', 'ir.command', 'Assume and name command', 3, 'Did you assume and name command?', { critical: true, board: 'Assume & name command' }),
     item('initialReport', 'ir.concise', 'Concise transmission', 1, 'Could the same information be said with fewer words?'),
 
-    item('assignments', 'as.who', 'Who — unit identified', 1, 'Did each assignment name the receiving unit?', { board: 'Who' }),
-    item('assignments', 'as.what', 'What — task', 2, 'Did each assignment state the task?', { board: 'What' }),
-    item('assignments', 'as.where', 'Where — location', 1.5, 'Did each assignment say where to work?', { board: 'Where' }),
-    item('assignments', 'as.why', 'Why — tactical objective', 1, 'Did the unit know which objective it is accomplishing?', { board: 'F/C P/S W/S L/C O/D' }),
+    item('assignments', 'as.who', 'Unit', 1, 'Did each assignment name the receiving unit?', { board: 'Unit' }),
+    item('assignments', 'as.what', 'Tasks', 2, 'Did each assignment state the task?', { board: 'Tasks' }),
+    item('assignments', 'as.where', 'Location', 1.5, 'Did each assignment say where to work?', { board: 'Location' }),
+    item('assignments', 'as.why', 'Objectives', 1, 'Did the unit know its objective: F/C, P/S, W/S, L/C or O/D?', { board: 'Objectives F/C P/S W/S L/C O/D' }),
     item('assignments', 'as.coverage', 'Critical tasks assigned', 3, 'Are the critical tactical objectives covered by someone?', { critical: true }),
     item('assignments', 'as.consistent', 'Consistent with strategy', 2, 'Do the assignments match your declared strategy?', { critical: true }),
     item('assignments', 'as.loop', 'Communication loop closed', 1.5, 'Did you acknowledge benchmark and progress reports?'),
     item('assignments', 'as.idle', 'Arriving units given direction', 1, 'Did every arriving unit receive an assignment or staging instruction?'),
 
-    item('followUp', 'fu.360', '360 status', 2, 'Did you say whether the 360 was completed?', { critical: true, board: '360' }),
-    item('followUp', 'fu.basement', 'Basement', 1, 'Is there a basement, and where is access?', { board: 'Basement' }),
-    item('followUp', 'fu.sides', 'Conditions on other sides', 2, 'What did you find on the other sides?', { board: 'Sides' }),
-    item('followUp', 'fu.safety', 'Immediate safety concerns', 2, 'Are there hazards everyone needs to hear about?', { critical: true, board: 'Safety' }),
-    item('followUp', 'fu.strategy', 'Confirm or change strategy', 2, 'Is your strategy the same or changing?', { board: 'Strategy' }),
-    item('followUp', 'fu.iap', 'Updated action plan', 1.5, 'What is the plan now?', { board: 'IAP' }),
-    item('followUp', 'fu.accountability', 'Accountability location', 1, 'Where is accountability?', { board: 'Acct' }),
+    item('followUp', 'fu.360', 'Results of the 360', 2, 'Was the 360 completed or not completed?', { critical: true, board: '360 completed / not' }),
+    item('followUp', 'fu.basement', 'Basement', 1, 'Basement yes or no? If yes: window well, look-out, or walk-out?', { board: 'Basement Y/N' }),
+    item('followUp', 'fu.sides', '360 findings', 2, 'What did the 360 show on the other sides?', { board: '360 findings' }),
+    item('followUp', 'fu.safety', 'Immediate safety concerns', 2, 'Any immediate safety concerns everyone needs to hear?', { critical: true, board: 'Immediate safety concerns' }),
+    item('followUp', 'fu.strategy', 'Confirm strategy', 2, 'Confirm strategy: offensive or defensive?', { board: 'Confirm strategy' }),
+    item('followUp', 'fu.iap', 'Changes to IAP', 1.5, 'Any changes to the incident action plan?', { board: 'Changes to IAP' }),
+    item('followUp', 'fu.accountability', 'Accountability location', 1, 'Accountability location: Alpha, Bravo, Charlie or Delta?', { board: 'Accountability A/B/C/D' }),
     item('followUp', 'fu.concise', 'Concise transmission', 1, 'Could the same information be said with fewer words?'),
 
     item('transfer', 'tr.conditions', 'Current conditions', 2, 'What are the building and fire conditions now?'),
@@ -116,6 +117,21 @@ export const DEFAULT_RUBRIC: RubricConfig = {
   dangerousCap: 50,
   commandNaming: 'street',
   transfer: { dispatchNotificationBy: 'receiving' },
+};
+
+/** Reference panels from the Engine Company Incident Command Board, shown on the in-app command board. */
+export const BOARD_REFERENCE = {
+  tacticalPriorities: ['Water on fire', 'Primary all clear', 'Fire knock down', 'Fire control', 'Secondary all clear', 'Loss stopped'],
+  communicationTickets: [
+    ['Mayday', '"Mayday, Mayday, Mayday", CAN report: who, what, where, needs'],
+    ['Priority traffic', 'Information that may change the IAP, fire in the attic or other concealed space, victims located'],
+    ['Roof report', 'Type, stability, conditions, firewall location, dead loads, attic condition'],
+    ['Status change', 'Achievement of tasks or tactical priorities, request for new assignment'],
+  ] as [string, string][],
+  objectives: 'F/C Fire control · P/S Primary search · W/S Water supply · L/C Loss control · O/D On deck',
+  maydayHelpOrder: ['Firefighter self-rescues', "Firefighter's crew", 'Another interior crew', 'On-deck company'],
+  maydayChecklist: ['Calm down', 'Control breathing', 'Conserve air, report air level', 'Activate PASS device', 'Thermal imaging camera?'],
+  bigBoxEntry: ['Fire attack team (2 companies)', 'Supply FDC', 'Roof/tilt wall report', 'On-deck company'],
 };
 
 export interface ResponsePlanConfig {

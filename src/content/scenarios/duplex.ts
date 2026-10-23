@@ -145,7 +145,7 @@ export const duplex: ScenarioTemplateInput = {
       '{DISPATCH}, {OWN} on scene, medium one-story duplex, working fire in the Bravo-side unit. {OWN} is stretching an attack line through the front door of the Bravo unit for fire control and primary search. Offensive. All other units Level One staging. {OWN} establishing {COMMAND}.',
     ],
     followUp: [
-      '{COMMAND} to {DISPATCH}, 360 complete. No basement. Fire showing from the kitchen window on Charlie. Common attic over both units, no firewall. Gas meter on Delta. Remaining offensive. Accountability is at {OWN}.',
+      '{COMMAND} to {DISPATCH}, 360 complete. No basement. Fire showing from the kitchen window on Charlie. Common attic over both units, no firewall. Gas meter on Delta. Remaining offensive. Accountability is on Alpha at {OWN}.',
     ],
     assignments: [
       { role: 'E2', task: 'waterSupply', text: '{E2}, from {COMMAND}, establish water supply to {OWN}.' },

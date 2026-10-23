@@ -102,7 +102,7 @@ export function CoachPanel({ sim }: { sim: SimState }) {
           );
         })}
       </ul>
-      {rubric.provisional && <p className="text-[11px] text-ink-500">Provisional checklist — not an official standard.</p>}
+      {rubric.provisional && <p className="text-[11px] text-ink-500">Checklist follows the command board wording; scoring is a training aid, not an official standard.</p>}
       <InstructorControls sim={sim} />
     </div>
   );

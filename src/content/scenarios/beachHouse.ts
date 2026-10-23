@@ -167,7 +167,7 @@ export const beachHouse: ScenarioTemplateInput = {
       '{DISPATCH}, {OWN} on scene, medium two-story elevated residential, working fire in the second-floor bedroom on the Alpha side. {OWN} is stretching an attack line up the front stairs for fire control and primary search. Offensive. All other units Level One staging. {OWN} establishing {COMMAND}.',
     ],
     followUp: [
-      '{COMMAND} to {DISPATCH}, 360 complete. No basement, open parking under the house. Second exterior stair to the Charlie deck. Smoke from the Delta-side upper window. Overhead power lines across the front — no ladders on Alpha. Remaining offensive. Accountability is at {OWN}.',
+      '{COMMAND} to {DISPATCH}, 360 complete. No basement, open parking under the house. Second exterior stair to the Charlie deck. Smoke from the Delta-side upper window. Overhead power lines across the front — no ladders on Alpha. Remaining offensive. Accountability is on Alpha at {OWN}.',
     ],
     assignments: [
       { role: 'E2', task: 'waterSupply', text: '{E2}, from {COMMAND}, establish water supply to {OWN} from the hydrant at the corner.' },

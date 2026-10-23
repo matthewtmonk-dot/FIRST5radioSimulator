@@ -1,5 +1,13 @@
 # Progress record
 
+## 2026-10-23: rubric matched to the command board
+
+- Initial Radio Report, Follow-Up Report and Unit Assignment checklist wording now follows the Engine Company Incident Command Board (Station 14 photos from Matt).
+- The in-app command board shows the board's tactical priorities, communication tickets, objectives key, Mayday help order and checklist, and big box entry requirements.
+- Follow-up examples give the accountability location by side, as the board lists it. Basement window well, look-out and walk-out are recognized.
+- Saved rubrics from version 1 pick up the new wording but keep the instructor's weights.
+- Still provisional: command transfer items (not on the board) and all scoring weights.
+
 ## 2026-10-22: first complete build (M1–M4)
 
 **Done and tested**
@@ -29,7 +37,5 @@
 
 **Open items**
 
-- Replace the provisional rubric with the department's Incident Command Board wording when the photos arrive.
 - Test Whisper download and transcription on a real device and microphone.
 - Add real building photos with licenses through the Scenario Builder.
-- Choose a repository for the code; it has not been pushed anywhere yet.

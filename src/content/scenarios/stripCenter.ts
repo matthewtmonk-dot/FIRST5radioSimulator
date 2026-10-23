@@ -155,7 +155,7 @@ export const stripCenter: ScenarioTemplateInput = {
       '{DISPATCH}, {OWN} on scene, large one-story strip center, light smoke from the roof in the middle of the strip, Alpha side. {OWN} is stretching an attack line through the front of the center units to investigate, fire control and primary search. Offensive. All other units continue in. {OWN} establishing {COMMAND}.',
     ],
     followUp: [
-      '{COMMAND} to {DISPATCH}, 360 complete. Fire is in the pizza restaurant kitchen, store 4. Salon storefront is clear. Power lines low over the rear alley. Remaining offensive. Accountability is at {OWN}.',
+      '{COMMAND} to {DISPATCH}, 360 complete. Fire is in the pizza restaurant kitchen, store 4. Salon storefront is clear. Power lines low over the rear alley. Remaining offensive. Accountability is on Alpha at {OWN}.',
     ],
     assignments: [
       { role: 'E2', task: 'waterSupply', text: '{E2}, from {COMMAND}, establish water supply to {OWN}.' },

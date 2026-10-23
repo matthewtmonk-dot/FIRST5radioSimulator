@@ -164,7 +164,7 @@ export const townhome: ScenarioTemplateInput = {
       '{DISPATCH}, {OWN} on scene, large two-story townhome row, working fire on the second floor of the middle unit, Alpha side. Reported occupant inside. {OWN} is stretching an attack line through the front door for fire control and primary search. Offensive. All other units Level One staging. {OWN} establishing {COMMAND}.',
     ],
     followUp: [
-      '{COMMAND} to {DISPATCH}, 360 complete. No basement. Fire showing from the second-floor rear bedroom on Charlie. Locked gates at the rear patios. Meter bank on Delta. Remaining offensive. Accountability is at {OWN}.',
+      '{COMMAND} to {DISPATCH}, 360 complete. No basement. Fire showing from the second-floor rear bedroom on Charlie. Locked gates at the rear patios. Meter bank on Delta. Remaining offensive. Accountability is on Alpha at {OWN}.',
     ],
     assignments: [
       { role: 'E2', task: 'waterSupply', text: '{E2}, from {COMMAND}, establish water supply to {OWN}.' },

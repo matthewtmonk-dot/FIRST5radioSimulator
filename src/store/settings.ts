@@ -68,7 +68,19 @@ function loadRubric(): RubricConfig {
   const saved = loadPref<RubricConfig>('rubric', DEFAULT_RUBRIC);
   // Keep newly added default items if the saved rubric predates them.
   const ids = new Set(saved.items.map((i) => i.id));
-  return { ...saved, items: [...saved.items, ...DEFAULT_RUBRIC.items.filter((i) => !ids.has(i.id))] };
+  const items = [...saved.items, ...DEFAULT_RUBRIC.items.filter((i) => !ids.has(i.id))];
+  if ((saved.version ?? 1) >= DEFAULT_RUBRIC.version) return { ...saved, items };
+  // Older saved rubric: take the new wording and source, keep the instructor's weights and switches.
+  const byId = new Map(DEFAULT_RUBRIC.items.map((i) => [i.id, i]));
+  return {
+    ...saved,
+    version: DEFAULT_RUBRIC.version,
+    source: DEFAULT_RUBRIC.source,
+    items: items.map((i) => {
+      const d = byId.get(i.id);
+      return d ? { ...i, label: d.label, hint: d.hint, board: d.board } : i;
+    }),
+  };
 }
 
 export const useSettings = create<SettingsState>((set) => ({

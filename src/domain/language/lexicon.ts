@@ -111,7 +111,7 @@ export const LEXICON = {
     '\\bno 360\\b', '\\bpartial 360\\b', '\\b360 not (complete|completed|possible|done)\\b', '\\bhave not (completed|done) (the |a |my )?360\\b',
   ],
   noBasement: ['\\bno basement\\b', '\\bslab( on grade)?\\b', '\\bwithout (a )?basement\\b', '\\bbasement negative\\b'],
-  hasBasement: ['\\b(has|have|with) (a )?basement\\b', '\\bbasement (access|entrance|door) (is )?(on|at|from)\\b'],
+  hasBasement: ['\\b(has|have|with) (a )?basement\\b', '\\b(window ?well|look ?out|walk ?out)( basement)?\\b', '\\bbasement (yes|positive)\\b', '\\bbasement (access|entrance|door) (is )?(on|at|from)\\b'],
   accountability: ['\\baccountability\\b', '\\bpar (is |will be )?(at|on)\\b', '\\bpassport\\b'],
   strategyContinue: ['\\b(remain|remaining|continue|continuing|stay|staying|still) (in )?(offensive|defensive|investigat\\w+)\\b', '\\bsame strategy\\b', '\\bno change in strategy\\b'],
   strategyChange: ['\\b(switch|switching|change|changing|going|transition|transitioning|move|moving) (to |into )?(an? )?(offensive|defensive|investigat\\w+)\\b'],

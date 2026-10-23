@@ -30,6 +30,14 @@ describe('initial report grading', () => {
     expect(g.items.filter((i) => i.status === 'incorrect' || i.status === 'missing')).toEqual([]);
   });
 
+  it('accepts a report worded the way the command board is laid out', () => {
+    const { g } = initialGrade(
+      'ranch-garage-attic',
+      () => 'Dispatch, Engine 14 on scene, small, 1 story, single family residential, working fire, Alpha side garage. Engine 14 supply-line and stretch attack line through the front door, fire control, primary search. Offensive. All other units Level One staging. Engine 14 assuming Ibis Command.',
+    );
+    expect(g.items.filter((i) => i.status === 'incorrect' || i.status === 'missing')).toEqual([]);
+  });
+
   it('marks an incomplete report as missing, not incorrect', () => {
     const { g } = initialGrade('ranch-garage-attic', () => 'Dispatch, Engine 14 on scene, small one-story house.');
     expect(g.items.some((i) => i.status === 'missing')).toBe(true);

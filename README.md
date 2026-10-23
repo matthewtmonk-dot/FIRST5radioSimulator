@@ -4,7 +4,7 @@ FIRST FIVE is browser-based practice for the first-arriving company officer's fi
 
 It runs entirely in your browser. There is no server, no account, no subscription and no API key. Your recordings, scores and settings stay on your device, in the browser's storage.
 
-> **Training aid only.** The grading checklist is **provisional**. It is modeled on common Blue Card-style command practice, and you can edit it under Settings → Rubric. It is not an official Blue Card product, and it is not certified or endorsed by any agency. Addresses, businesses and incidents are fictional. Unit names and the response plan are samples that you set under Settings → Response plan.
+> **Training aid only.** The initial report, follow-up and unit assignment checklist items follow the wording of the Engine Company Incident Command Board (Station 14 copy). The command transfer items are not on that board and are **provisional**, and so are the scoring weights. You can edit all of it under Settings → Rubric. It is not an official Blue Card product, and it is not certified or endorsed by any agency. Addresses, businesses and incidents are fictional. Unit names and the response plan are samples that you set under Settings → Response plan.
 
 ## Quick start
 

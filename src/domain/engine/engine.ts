@@ -114,7 +114,8 @@ function fmtClock(state: SimState): string {
 
 export function benchmarks(state: SimState) {
   const done = (task: Task) => state.assignments.some((a) => a.task === task && a.status === 'complete');
-  return { primaryClear: done('primarySearch'), waterSupply: done('waterSupply'), knockdown: done('fireControl') };
+  const waterOnFire = state.assignments.some((a) => a.task === 'fireControl' && (a.status === 'working' || a.status === 'complete') && state.t >= a.startAt);
+  return { waterOnFire, primaryClear: done('primarySearch'), waterSupply: done('waterSupply'), knockdown: done('fireControl') };
 }
 
 function revealedFindingObjs(state: SimState): Finding[] {

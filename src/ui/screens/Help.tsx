@@ -50,8 +50,9 @@ export function Help() {
             ]}
           />
           <p className="text-ink-400">
-            The checklist, weights and penalties are editable under Settings → Rubric. The shipped checklist is provisional, taken from the build brief, and is
-            not an official Blue Card, VCFR, or certified standard.
+            The checklist, weights and penalties are editable under Settings → Rubric. The initial report, follow-up and unit assignment items follow the
+            wording of the Engine Company Incident Command Board; the command transfer items are not on the board and are provisional. Weights and
+            penalties are training choices. This is not an official Blue Card, VCFR, or certified standard.
           </p>
         </Section>
 

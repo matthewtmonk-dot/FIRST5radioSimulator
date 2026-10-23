@@ -170,7 +170,7 @@ export const ranchGarage: ScenarioTemplateInput = {
       '{DISPATCH}, {OWN} on scene, small one-story residential, working fire in the attached garage on the Alpha side. {OWN} is stretching an attack line through the front door for fire control and primary search. Offensive. All other units Level One staging. {OWN} establishing {COMMAND}.',
     ],
     followUp: [
-      '{COMMAND} to {DISPATCH}, 360 complete. No basement. Smoke from the Charlie-side attic vents over the garage, rear garage door open. Low power lines on the Delta side. Remaining offensive. Accountability is at {OWN}.',
+      '{COMMAND} to {DISPATCH}, 360 complete. No basement. Smoke from the Charlie-side attic vents over the garage, rear garage door open. Low power lines on the Delta side. Remaining offensive. Accountability is on Alpha at {OWN}.',
     ],
     assignments: [
       { role: 'E2', task: 'waterSupply', text: '{E2}, from {COMMAND}, establish water supply to {OWN}.' },

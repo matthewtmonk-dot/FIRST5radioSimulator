@@ -163,7 +163,7 @@ export const smallOffice: ScenarioTemplateInput = {
       '{DISPATCH}, {OWN} on scene, medium one-story office building, working fire in the front office at the Alpha Delta corner. {OWN} is stretching an attack line through the front entrance for fire control and primary search. Offensive. All other units Level One staging. {OWN} establishing {COMMAND}.',
     ],
     followUp: [
-      '{COMMAND} to {DISPATCH}, 360 complete. Charlie side nothing showing, light smoke at the rear soffit. Service drop over the fire window on Delta — notify the power company. Water supply delayed, hydrant out of service. Remaining offensive. Accountability is at {OWN}.',
+      '{COMMAND} to {DISPATCH}, 360 complete. Charlie side nothing showing, light smoke at the rear soffit. Service drop over the fire window on Delta — notify the power company. Water supply delayed, hydrant out of service. Remaining offensive. Accountability is on Alpha at {OWN}.',
     ],
     assignments: [
       { role: 'E2', task: 'waterSupply', text: '{E2}, from {COMMAND}, establish water supply to {OWN} from the hydrant at the entrance.' },

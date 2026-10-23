@@ -172,8 +172,8 @@ export function Home() {
         </Panel>
 
         <p className="text-xs leading-relaxed text-ink-500">
-          FIRST FIVE is an independent training aid. Its checklist is <Badge tone="amber">provisional</Badge> and is not an official Blue Card, VCFR, or certified
-          standard. Call signs and response plans are configurable samples, not actual district assignments. Addresses are fictional. Building views are
+          FIRST FIVE is an independent training aid. Its checklist follows the wording of the Engine Company Incident Command Board, with{' '}
+          <Badge tone="amber">provisional</Badge> command transfer items and scoring weights. It is not an official Blue Card, VCFR, or certified standard. Call signs and response plans are configurable samples, not actual district assignments. Addresses are fictional. Building views are
           procedural illustrations unless a photo has been added.
         </p>
       </div>

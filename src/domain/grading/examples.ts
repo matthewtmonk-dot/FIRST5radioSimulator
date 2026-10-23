@@ -62,7 +62,7 @@ export function exampleFollowUp(inst: ScenarioInstance, conditionId: string): st
     .map((f) => f.text.replace(/\.$/, ''))
     .join('; ');
   const basement = inst.building.basementRelevant ? (inst.building.basement ? 'Basement present.' : 'No basement.') : '';
-  return `${inst.commandName} to ${inst.dispatchName}, ${recon}. ${findings ? `${findings}.` : ''} ${basement} Remaining ${c.acceptableStrategies[0]}. Accountability is at ${inst.ownUnit}.`
+  return `${inst.commandName} to ${inst.dispatchName}, ${recon}. ${findings ? `${findings}.` : ''} ${basement} Remaining ${c.acceptableStrategies[0]}. Accountability is on Alpha at ${inst.ownUnit}.`
     .replace(/\s+/g, ' ')
     .trim();
 }
